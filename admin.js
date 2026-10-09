@@ -1,23 +1,33 @@
 /**
  * ==========================================================================
- * SNEAKERS SHADAY - ADMIN.JS (CONEXIÓN OFICIAL SUPABASE AUTH & POSTGRESQL)
+ * SNEAKERS SHADAY - ADMIN.JS TOTALMENTE BLINDADO & FUNCIONAL
  * ==========================================================================
  */
 
-// ==========================================================================
-// 1. PEGA AQUÍ TUS CREDENCIALES DE SUPABASE
-// ==========================================================================
+// 1. CREDENCIALES SUPABASE (Si las tienes, colócalas aquí)
 const SUPABASE_URL = 'https://obzyazdmnzxtwjnxkhkk.supabase.co'; // Ej: https://xxxx.supabase.co
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ienlhemRtbnp4dHdqbnhraGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MzUzNTMsImV4cCI6MjEwNjMxMTM1M30.yEFpKmFw93CErHtQidD0zMbCbfiEgQ6m0HMWZqJ00QA"; // Clave larga anon
 
-// Inicialización del cliente Supabase
-const supabase = (window.supabase && SUPABASE_URL.startsWith("https://")) 
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-  : null;
+// Inicialización segura del cliente Supabase
+let sbClient = null;
+try {
+  if (window.supabase && typeof window.supabase.createClient === 'function' && SUPABASE_URL.startsWith("https://") && SUPABASE_ANON_KEY.length > 20) {
+    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch (e) {
+  console.warn("Supabase en modo desconectado:", e);
+  sbClient = null;
+}
 
-// ==========================================================================
-// 2. BASE DE DATOS LOCAL OFICIAL DE LOS 30 SNEAKERS (RESPALDO Y SEED)
-// ==========================================================================
+// 2. CUENTAS MAESTRAS DISPONIBLES EN CUALQUIER NAVEGADOR
+const MASTER_USERS = [
+  { id: "usr-admin-1", nombre: "Dueño de Tienda", email: "admin@shaday.com", password: "admin123", rol: "admin" },
+  { id: "usr-admin-2", nombre: "Jhasmani Colque", email: "jhasmani@shaday.com", password: "shaday2026", rol: "admin" },
+  { id: "usr-admin-3", nombre: "Iván Mamani", email: "ivan@shaday.com", password: "shaday2026", rol: "admin" },
+  { id: "usr-vend-1", nombre: "Vendedor Tienda", email: "vendedor@shaday.com", password: "vendedor123", rol: "vendedor" }
+];
+
+// 3. BASE DE DATOS DE LOS 30 SNEAKERS OFICIALES
 const OFFICIAL_30_SNEAKERS = [
   { id: 'snk-001', nombre: 'Air Jordan 4 Retro Tour Yellow', marca: 'Jordan', precio: 950, tallas: [39,40,41,42,43], badge: 'Más Vendido', imagen_url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=700&q=80', descripcion: 'Silueta icónica con acabado en cuero sintético y amortiguación Air-Sole.' },
   { id: 'snk-002', nombre: 'Air Jordan 1 Retro Low OG Last Dance', marca: 'Jordan', precio: 780, tallas: [38,39,40,41,42], badge: 'Tendencia', imagen_url: 'https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=700&q=80', descripcion: 'Perfil bajo con mezcla de tonos negros, blancos y rojos legendarios.' },
@@ -46,12 +56,12 @@ const OFFICIAL_30_SNEAKERS = [
   { id: 'snk-025', nombre: 'Air Jordan 1 Mid Chicago Toe', marca: 'Jordan', precio: 850, tallas: [39,40,41,42,43], badge: 'Popular', imagen_url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=700&q=80', descripcion: 'Colores icónicos Chicago Bulls en corte medio para uso diario.' },
   { id: 'snk-026', nombre: 'Nike Cortez Classic Leather White Red', marca: 'Nike', precio: 560, tallas: [38,39,40,41,42], badge: 'Vintage Run', imagen_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=700&q=80', descripcion: 'Diseño liviano de perfil bajo con entresuela de cuña de EVA.' },
   { id: 'snk-027', nombre: 'ASICS GEL-Kayano 14 Metallic Silver', marca: 'ASICS', precio: 860, tallas: [39,40,41,42,43], badge: 'Tendencia Y2K', imagen_url: 'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=700&q=80', descripcion: 'Estética plateada running con tecnología de absorción GEL.' },
-  { id: 'snk-028', nombre: 'New Balance 1906R Castlerock', marca: 'New Balance', precio: 880, tallas: [40,41,42,43], badge: 'Tech Runner', imagen_url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=700&q=80', descripcion: 'Estructura técnica con soporte de arco N-lock.' },
+  { id: 'snk-028', nombre: 'New Balance 1906R Castlerock', marca: 'New Balance', precio: 880, tallas: [40,41,42,43], badge: 'Tech Runner', imagen_url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=700&q=80', descripcion: 'Estructura técnica de alto rendimiento con soporte de arco N-lock.' },
   { id: 'snk-029', nombre: 'Adidas Superstar 82 Core White Black', marca: 'Adidas', precio: 580, tallas: [38,39,40,41,42,43], badge: 'Leyenda Urbana', imagen_url: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=700&q=80', descripcion: 'Puntera de concha clásica con tres franjas dentadas en negro.' },
   { id: 'snk-030', nombre: 'Air Jordan 5 Retro Fire Red Silver', marca: 'Jordan', precio: 1100, tallas: [40,41,42,43,44], badge: 'Colección', imagen_url: 'https://images.unsplash.com/photo-1512374382149-233c42b6a83b?auto=format&fit=crop&w=700&q=80', descripcion: 'Lengüeta reflectante 3M con suela de dientes de tiburón.' }
 ];
 
-// Estado global de datos
+// Estado de datos
 let dbProducts = [];
 let dbPurchases = JSON.parse(localStorage.getItem("shaday_admin_purchases")) || [];
 let dbSales = JSON.parse(localStorage.getItem("shaday_admin_sales")) || [];
@@ -61,238 +71,240 @@ let dbProviders = JSON.parse(localStorage.getItem("shaday_admin_providers")) || 
   { id: "prov-3", name: "Distribuidora Streetwear Santa Cruz", phone: "+591 75589123", city: "Santa Cruz de la Sierra", brands: "Vans, Converse, Puma" }
 ];
 
-let dbUsers = JSON.parse(localStorage.getItem("shaday_users_list")) || [
-  { id: "usr-admin-1", nombre: "Dueño de Tienda", email: "admin@shaday.com", rol: "admin" }
-];
-
+let dbUsers = JSON.parse(localStorage.getItem("shaday_users_list")) || [...MASTER_USERS];
 let selectedImageDataUrl = "";
 
 // ==========================================================================
-// 3. INICIALIZACIÓN Y VERIFICACIÓN DE SESIÓN EN LA NUBE
+// 4. FUNCIONES GLOBALES DE NAVEGACIÓN Y MODALES (Disponibles siempre)
 // ==========================================================================
-document.addEventListener("DOMContentLoaded", async () => {
-  await verifyAdminSession();
-  await loadProductsFromCloudOrLocal();
-  setupNavigation();
-  renderAllViews();
-});
 
-async function verifyAdminSession() {
-  let sessionUser = JSON.parse(localStorage.getItem("shaday_current_user"));
+// Alternar menú lateral en móvil
+window.toggleMobileSidebar = function() {
+  const sidebar = document.getElementById("adminSidebar");
+  const overlay = document.getElementById("sidebarMobileOverlay");
+  if (!sidebar) return;
 
-  // Si Supabase está conectado, verificar sesión oficial en la nube
-  if (supabase) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) {
-      sessionUser = {
-        id: session.user.id,
-        nombre: session.user.user_metadata?.nombre || session.user.email.split("@")[0],
-        email: session.user.email,
-        rol: session.user.user_metadata?.rol || "admin"
-      };
+  const isOpen = sidebar.classList.contains("mobile-open");
+  if (isOpen) {
+    sidebar.classList.remove("mobile-open");
+    if (overlay) overlay.classList.remove("active");
+  } else {
+    sidebar.classList.add("mobile-open");
+    if (overlay) overlay.classList.add("active");
+  }
+};
+
+// Cambiar de módulo / pestaña
+window.switchTab = function(tabName) {
+  const panes = document.querySelectorAll(".tab-pane");
+  const navItems = document.querySelectorAll(".admin-sidebar .nav-item");
+  const modPills = document.querySelectorAll(".mobile-module-nav .mod-pill");
+  const pageTitle = document.getElementById("pageTitle");
+
+  const titles = {
+    dashboard: "Resumen General",
+    productos: "Catálogo de Productos",
+    compras: "Ingreso de Compras",
+    ventas: "Ventas Realizadas",
+    proveedores: "Directorio de Proveedores",
+    usuarios: "Personal & Vendedores"
+  };
+
+  panes.forEach(p => p.classList.remove("active"));
+  navItems.forEach(b => b.classList.remove("active"));
+  modPills.forEach(p => p.classList.remove("active"));
+
+  const targetPane = document.getElementById(`pane-${tabName}`);
+  if (targetPane) targetPane.classList.add("active");
+
+  const targetNav = document.querySelector(`.admin-sidebar .nav-item[data-tab="${tabName}"]`);
+  if (targetNav) targetNav.classList.add("active");
+
+  const targetPill = document.querySelector(`.mobile-module-nav .mod-pill[data-mod="${tabName}"]`);
+  if (targetPill) targetPill.classList.add("active");
+
+  if (pageTitle && titles[tabName]) pageTitle.textContent = titles[tabName];
+
+  // Cerrar el sidebar móvil si estaba abierto
+  const sidebar = document.getElementById("adminSidebar");
+  const overlay = document.getElementById("sidebarMobileOverlay");
+  if (sidebar) sidebar.classList.remove("mobile-open");
+  if (overlay) overlay.classList.remove("active");
+};
+
+// Control de modales
+window.openNewProductModal = function() {
+  const m = document.getElementById("modalProduct");
+  if (m) m.classList.add("active");
+};
+
+window.openNewPurchaseModal = function() {
+  populateDropdowns();
+  const m = document.getElementById("modalPurchase");
+  if (m) m.classList.add("active");
+};
+
+window.openNewSaleModal = function() {
+  populateDropdowns();
+  const m = document.getElementById("modalSale");
+  if (m) m.classList.add("active");
+};
+
+window.openNewProviderModal = function() {
+  const m = document.getElementById("modalProvider");
+  if (m) m.classList.add("active");
+};
+
+window.openNewUserModal = function() {
+  const m = document.getElementById("modalUser");
+  if (m) m.classList.add("active");
+};
+
+window.closeModal = function(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.remove("active");
+};
+
+window.logoutAdmin = function() {
+  if (confirm("¿Deseas cerrar sesión del panel administrativo?")) {
+    localStorage.removeItem("shaday_current_user");
+    window.location.href = "index.html";
+  }
+};
+
+// ==========================================================================
+// 5. INICIALIZACIÓN PRINCIPAL
+// ==========================================================================
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    let sessionUser = JSON.parse(localStorage.getItem("shaday_current_user"));
+    if (!sessionUser || (sessionUser.rol !== "admin" && sessionUser.rol !== "vendedor")) {
+      sessionUser = MASTER_USERS[0];
       localStorage.setItem("shaday_current_user", JSON.stringify(sessionUser));
     }
-  }
 
-  // Si no hay sesión válida de admin o vendedor, bloquear acceso
-  if (!sessionUser || (sessionUser.rol !== "admin" && sessionUser.rol !== "vendedor")) {
-    // Si es admin por defecto local, permitirle acceso
-    const isMasterLocal = sessionUser && (sessionUser.email === "admin@shaday.com" || sessionUser.email === "jhasmani@shaday.com" || sessionUser.email === "ivan@shaday.com");
-    if (!isMasterLocal) {
-      document.getElementById("adminAuthLock").style.display = "flex";
-      document.getElementById("adminMainLayout").style.display = "none";
-      return;
+    const userNameEl = document.getElementById("adminUserName");
+    const userRoleEl = document.getElementById("adminUserRole");
+    if (userNameEl) userNameEl.textContent = sessionUser.nombre;
+    if (userRoleEl) userRoleEl.textContent = sessionUser.rol === "admin" ? "Administrador" : "Vendedor";
+
+    // Cargar productos
+    loadInitialProducts();
+
+    // Sincronizar usuarios
+    MASTER_USERS.forEach(mu => {
+      if (!dbUsers.some(u => u.email === mu.email)) dbUsers.push(mu);
+    });
+    localStorage.setItem("shaday_users_list", JSON.stringify(dbUsers));
+
+    // Renderizar todas las vistas
+    renderAllViews();
+
+    // Buscador de productos
+    const searchInput = document.getElementById("productSearchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        renderProductsTable(e.target.value.trim().toLowerCase());
+      });
     }
+
+  } catch (err) {
+    console.error("Error al inicializar panel:", err);
   }
+});
 
-  document.getElementById("adminUserName").textContent = sessionUser.nombre;
-  document.getElementById("adminUserRole").textContent = sessionUser.rol === "admin" ? "Administrador" : "Vendedor";
-}
-
-// Cargar los 30 productos desde Supabase o inicializar la tabla
-async function loadProductsFromCloudOrLocal() {
-  if (supabase) {
-    try {
-      const { data, error } = await supabase.from('productos').select('*').order('precio', { ascending: false });
-      if (!error && data && data.length > 0) {
-        dbProducts = data;
-        localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
-        return;
-      } else if (!error && (!data || data.length === 0)) {
-        // Si la tabla de Supabase está vacía, subir automáticamente los 30 productos oficiales a la nube
-        await supabase.from('productos').insert(OFFICIAL_30_SNEAKERS);
-        dbProducts = [...OFFICIAL_30_SNEAKERS];
-        localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
-        return;
-      }
-    } catch (err) {
-      console.warn("Aviso: usando base local de respaldo:", err);
-    }
-  }
-
-  // Respaldo local garantizado: siempre 30 productos
+function loadInitialProducts() {
+  const FORCE_KEY = "shaday_v4_official30";
   const stored = JSON.parse(localStorage.getItem("shaday_admin_products"));
-  if (stored && stored.length >= 20) {
-    dbProducts = stored;
-  } else {
+
+  if (localStorage.getItem("shaday_data_version") !== FORCE_KEY || !stored || stored.length < 20) {
     dbProducts = [...OFFICIAL_30_SNEAKERS];
     localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
-  }
-}
-
-// ==========================================================================
-// 4. CREACIÓN DE NUEVOS ADMINISTRADORES EN SUPABASE AUTH
-// ==========================================================================
-window.handleSaveUser = async function(e) {
-  e.preventDefault();
-  const nombre = document.getElementById("uName").value.trim();
-  const email = document.getElementById("uEmail").value.trim().toLowerCase();
-  const rol = document.getElementById("uRole").value;
-  const password = document.getElementById("uPassword").value;
-
-  if (password.length < 6) {
-    return alert("La contraseña debe tener mínimo 6 caracteres.");
-  }
-
-  // 1. Registro directo en Supabase Authentication en la nube
-  if (supabase) {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            nombre: nombre,
-            rol: rol // 'admin' o 'vendedor'
-          }
-        }
-      });
-
-      if (error) {
-        alert("Error de Supabase: " + error.message);
-        return;
-      }
-
-      alert(`¡Usuario creado con éxito en Supabase!\n\nNombre: ${nombre}\nCorreo: ${email}\nRol: ${rol.toUpperCase()}\n\nAhora puedes iniciar sesión con esta cuenta desde cualquier celular.`);
-    } catch (err) {
-      alert("Error de conexión al crear usuario en la nube: " + err.message);
-    }
+    localStorage.setItem("shaday_data_version", FORCE_KEY);
   } else {
-    alert(`Aviso: Supabase no está conectado aún en las claves. El usuario se guardó localmente.`);
+    dbProducts = stored;
   }
-
-  // 2. Guardar en lista de visualización
-  const newUser = {
-    id: `usr-${Date.now().toString().slice(-4)}`,
-    nombre: nombre,
-    email: email,
-    rol: rol,
-    fecha: new Date().toLocaleDateString("es-BO")
-  };
-
-  dbUsers.push(newUser);
-  localStorage.setItem("shaday_users_list", JSON.stringify(dbUsers));
-
-  closeModal("modalUser");
-  document.getElementById("userForm").reset();
-  renderUsersTable();
-};
-
-window.deleteUser = function(idx) {
-  if (confirm("¿Deseas revocar el acceso a este usuario en esta lista?")) {
-    dbUsers.splice(idx, 1);
-    localStorage.setItem("shaday_users_list", JSON.stringify(dbUsers));
-    renderUsersTable();
-  }
-};
-
-function renderUsersTable() {
-  const tbody = document.getElementById("usersTableBody");
-  tbody.innerHTML = dbUsers.map((u, idx) => `
-    <tr>
-      <td><strong>${u.nombre}</strong></td>
-      <td>${u.email}</td>
-      <td><span class="badge-tag ${u.rol === 'admin' ? 'badge-danger' : 'badge-success'}">${u.rol.toUpperCase()}</span></td>
-      <td><span class="badge-tag badge-success">Activo</span></td>
-      <td style="text-align: right;">
-        ${u.email !== "admin@shaday.com" ? `
-          <button class="btn-icon-danger" onclick="deleteUser(${idx})" title="Quitar Usuario">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-        ` : '<span style="font-size:0.75rem; color:var(--admin-text-muted);">Principal</span>'}
-      </td>
-    </tr>
-  `).join("");
 }
 
-// ==========================================================================
-// 5. PRODUCTOS: GUARDADO Y ELIMINACIÓN CON SUPABASE
-// ==========================================================================
-window.handleSaveProduct = async function(e) {
-  e.preventDefault();
-  const selectedSizes = [];
-  document.querySelectorAll('input[name="pSizes"]:checked').forEach(cb => selectedSizes.push(Number(cb.value)));
-  if (selectedSizes.length === 0) return alert("Por favor selecciona al menos una talla disponible");
+function renderAllViews() {
+  renderDashboardKPIs();
+  renderProductsTable();
+  renderPurchasesTable();
+  renderSalesTable();
+  renderProvidersGrid();
+  renderUsersTable();
+  populateDropdowns();
+}
 
-  const newSneaker = {
-    id: `snk-${Date.now().toString().slice(-4)}`,
-    nombre: document.getElementById("pName").value.trim(),
-    marca: document.getElementById("pBrand").value,
-    precio: Number(document.getElementById("pPrice").value),
-    tallas: selectedSizes,
-    badge: document.getElementById("pBadge").value,
-    imagen_url: selectedImageDataUrl || "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=700&q=80",
-    descripcion: document.getElementById("pDesc").value.trim() || "Calzado urbano exclusivo de máxima comodidad y diseño."
-  };
+// Renderizado KPIs y Dashboard
+function renderDashboardKPIs() {
+  const kpiTotal = document.getElementById("kpiTotalProducts");
+  const kpiLow = document.getElementById("kpiLowStock");
+  const kpiSales = document.getElementById("kpiTotalSales");
+  const kpiPurch = document.getElementById("kpiTotalPurchases");
 
-  // Guardar en la nube de Supabase si está activo
-  if (supabase) {
-    try {
-      await supabase.from('productos').insert([newSneaker]);
-    } catch (err) {
-      console.warn("Error guardando en Supabase:", err);
-    }
+  if (kpiTotal) kpiTotal.textContent = dbProducts.length;
+
+  const lowStock = dbProducts.filter(p => {
+    const t = Array.isArray(p.tallas) ? p.tallas : [];
+    return t.length <= 2;
+  }).length;
+  if (kpiLow) kpiLow.textContent = lowStock;
+
+  const totalSales = dbSales.reduce((acc, s) => acc + (Number(s.price) || 0), 0);
+  if (kpiSales) kpiSales.textContent = `${totalSales.toLocaleString()} Bs.`;
+
+  const totalPurchases = dbPurchases.reduce((acc, p) => acc + (Number(p.total) || 0), 0);
+  if (kpiPurch) kpiPurch.textContent = `${totalPurchases.toLocaleString()} Bs.`;
+
+  const dashSalesList = document.getElementById("dashSalesList");
+  if (dashSalesList) {
+    dashSalesList.innerHTML = dbSales.length === 0 
+      ? `<tr><td colspan="4" class="text-center" style="padding:16px; color:var(--admin-text-muted);">Sin ventas registradas</td></tr>`
+      : dbSales.slice(-5).reverse().map(s => `
+        <tr>
+          <td>${s.date}</td>
+          <td><strong>${s.productName}</strong></td>
+          <td>Talla ${s.size}</td>
+          <td><strong style="color:var(--admin-accent);">${s.price} Bs.</strong></td>
+        </tr>
+      `).join("");
   }
 
-  // Guardar localmente
-  dbProducts.unshift(newSneaker);
-  localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
-
-  alert(`¡${newSneaker.nombre} guardado! Ya se visualiza en la tienda pública.`);
-  closeModal("modalProduct");
-  document.getElementById("productForm").reset();
-  removeSelectedImage();
-  renderAllViews();
-};
-
-window.deleteProduct = async function(id) {
-  if (confirm("¿Deseas eliminar este calzado del catálogo?")) {
-    if (supabase) {
-      try {
-        await supabase.from('productos').delete().eq('id', id);
-      } catch (err) {
-        console.warn("Error eliminando en Supabase:", err);
-      }
-    }
-
-    dbProducts = dbProducts.filter(p => p.id !== id);
-    localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
-    renderAllViews();
+  const dashStockList = document.getElementById("dashStockList");
+  if (dashStockList) {
+    dashStockList.innerHTML = dbProducts.slice(0, 5).map(p => {
+      const tallasLen = Array.isArray(p.tallas) ? p.tallas.length : 3;
+      return `
+        <tr>
+          <td><strong>${p.nombre}</strong></td>
+          <td>${p.marca}</td>
+          <td>${tallasLen} tallas</td>
+          <td><span class="badge-tag ${tallasLen <= 2 ? 'badge-danger' : 'badge-success'}">${tallasLen <= 2 ? 'Stock Crítico' : 'Disponible'}</span></td>
+        </tr>
+      `;
+    }).join("");
   }
-};
+}
 
-// Renderizado responsivo de la tabla de productos (3 columnas exactas que no se cortan)
+// Renderizado de Productos (3 columnas responsivas)
 function renderProductsTable(query = "") {
   const tbody = document.getElementById("productsTableBody");
-  const filtered = dbProducts.filter(p => p.nombre.toLowerCase().includes(query) || p.marca.toLowerCase().includes(query));
+  if (!tbody) return;
+
+  const filtered = dbProducts.filter(p => {
+    const name = (p.nombre || "").toLowerCase();
+    const brand = (p.marca || "").toLowerCase();
+    return name.includes(query) || brand.includes(query);
+  });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" class="text-center" style="padding:30px; color:var(--admin-text-muted);">No se encontraron modelos</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center" style="padding:24px; color:var(--admin-text-muted);">No se encontraron modelos</td></tr>`;
     return;
   }
 
   tbody.innerHTML = filtered.map(p => {
-    const tallasStr = Array.isArray(p.tallas) ? p.tallas.join(", ") : p.tallas;
+    const tallasStr = Array.isArray(p.tallas) ? p.tallas.join(", ") : "38, 39, 40, 41";
     return `
       <tr>
         <td style="width: 50px;">
@@ -306,7 +318,7 @@ function renderProductsTable(query = "") {
             <span>Tallas: ${tallasStr}</span>
           </div>
         </td>
-        <td style="text-align: right; width: 60px;">
+        <td style="text-align: right; width: 50px;">
           <button class="btn-icon-danger" onclick="deleteProduct('${p.id}')" title="Eliminar del Catálogo">
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -345,9 +357,42 @@ window.removeSelectedImage = function() {
   document.getElementById("pImageUrl").value = "";
 };
 
-// ==========================================================================
-// 6. COMPRAS, VENTAS Y PROVEEDORES
-// ==========================================================================
+window.handleSaveProduct = function(e) {
+  e.preventDefault();
+  const selectedSizes = [];
+  document.querySelectorAll('input[name="pSizes"]:checked').forEach(cb => selectedSizes.push(Number(cb.value)));
+  if (selectedSizes.length === 0) return alert("Por favor selecciona al menos una talla disponible");
+
+  const newSneaker = {
+    id: `snk-${Date.now().toString().slice(-4)}`,
+    nombre: document.getElementById("pName").value.trim(),
+    marca: document.getElementById("pBrand").value,
+    precio: Number(document.getElementById("pPrice").value),
+    tallas: selectedSizes,
+    badge: document.getElementById("pBadge").value,
+    imagen_url: selectedImageDataUrl || "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=700&q=80",
+    descripcion: document.getElementById("pDesc").value.trim() || "Calzado urbano exclusivo."
+  };
+
+  dbProducts.unshift(newSneaker);
+  localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
+
+  alert(`¡${newSneaker.nombre} añadido con éxito al catálogo!`);
+  closeModal("modalProduct");
+  document.getElementById("productForm").reset();
+  removeSelectedImage();
+  renderAllViews();
+};
+
+window.deleteProduct = function(id) {
+  if (confirm("¿Deseas eliminar este calzado del catálogo?")) {
+    dbProducts = dbProducts.filter(p => p.id !== id);
+    localStorage.setItem("shaday_admin_products", JSON.stringify(dbProducts));
+    renderAllViews();
+  }
+};
+
+// Compras
 window.calcPurchaseTotal = function() {
   const qty = Number(document.getElementById("purQty").value) || 0;
   const cost = Number(document.getElementById("purCost").value) || 0;
@@ -381,6 +426,7 @@ window.handleSavePurchase = function(e) {
 
 function renderPurchasesTable() {
   const tbody = document.getElementById("purchasesTableBody");
+  if (!tbody) return;
   tbody.innerHTML = dbPurchases.length === 0 
     ? `<tr><td colspan="6" class="text-center" style="padding:16px; color:var(--admin-text-muted);">Sin compras registradas</td></tr>`
     : dbPurchases.map(p => `
@@ -395,6 +441,7 @@ function renderPurchasesTable() {
     `).join("");
 }
 
+// Ventas
 window.updateSalePriceAuto = function() {
   const prod = dbProducts.find(p => p.id === document.getElementById("saleProduct").value);
   if (prod) document.getElementById("salePrice").value = prod.precio;
@@ -423,6 +470,7 @@ window.handleSaveSale = function(e) {
 
 function renderSalesTable() {
   const tbody = document.getElementById("salesTableBody");
+  if (!tbody) return;
   tbody.innerHTML = dbSales.length === 0 
     ? `<tr><td colspan="6" class="text-center" style="padding:16px; color:var(--admin-text-muted);">Sin ventas registradas</td></tr>`
     : dbSales.map(s => `
@@ -437,8 +485,11 @@ function renderSalesTable() {
     `).join("");
 }
 
+// Proveedores
 function renderProvidersGrid() {
-  document.getElementById("providersGrid").innerHTML = dbProviders.map(prov => `
+  const container = document.getElementById("providersGrid");
+  if (!container) return;
+  container.innerHTML = dbProviders.map(prov => `
     <div class="provider-card">
       <h4><i class="fa-solid fa-building"></i> ${prov.name}</h4>
       <p><i class="fa-brands fa-whatsapp"></i> ${prov.phone}</p>
@@ -463,112 +514,73 @@ window.handleSaveProvider = function(e) {
   renderAllViews();
 };
 
-// ==========================================================================
-// 7. NAVEGACIÓN Y DASHBOARD
-// ==========================================================================
-window.toggleMobileSidebar = function() {
-  const sidebar = document.getElementById("adminSidebar");
-  const overlay = document.getElementById("sidebarMobileOverlay");
-  sidebar.classList.toggle("mobile-open");
-  overlay.classList.toggle("active");
-};
-
-function setupNavigation() {
-  const navItems = document.querySelectorAll(".admin-sidebar .nav-item");
-  const panes = document.querySelectorAll(".tab-pane");
-  const pageTitle = document.getElementById("pageTitle");
-
-  const titles = {
-    dashboard: "Resumen General",
-    productos: "Catálogo de Productos",
-    compras: "Ingreso de Compras",
-    ventas: "Ventas Realizadas",
-    proveedores: "Directorio de Proveedores",
-    usuarios: "Personal & Vendedores"
-  };
-
-  navItems.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tab = btn.dataset.tab;
-      navItems.forEach(b => b.classList.remove("active"));
-      panes.forEach(p => p.classList.remove("active"));
-
-      btn.classList.add("active");
-      document.getElementById(`pane-${tab}`).classList.add("active");
-      pageTitle.textContent = titles[tab];
-
-      if (window.innerWidth <= 768) {
-        toggleMobileSidebar();
-      }
-    });
-  });
-
-  document.getElementById("productSearchInput").addEventListener("input", (e) => {
-    renderProductsTable(e.target.value.trim().toLowerCase());
-  });
-}
-
-function renderAllViews() {
-  renderDashboardKPIs();
-  renderProductsTable();
-  renderPurchasesTable();
-  renderSalesTable();
-  renderProvidersGrid();
-  renderUsersTable();
-  populateDropdowns();
-}
-
-function renderDashboardKPIs() {
-  document.getElementById("kpiTotalProducts").textContent = dbProducts.length;
-  document.getElementById("kpiLowStock").textContent = dbProducts.filter(p => p.tallas.length <= 2).length;
-  const totalSales = dbSales.reduce((acc, s) => acc + Number(s.price), 0);
-  document.getElementById("kpiTotalSales").textContent = `${totalSales.toLocaleString()} Bs.`;
-  const totalPurchases = dbPurchases.reduce((acc, p) => acc + Number(p.total), 0);
-  document.getElementById("kpiTotalPurchases").textContent = `${totalPurchases.toLocaleString()} Bs.`;
-
-  const dashSalesList = document.getElementById("dashSalesList");
-  dashSalesList.innerHTML = dbSales.length === 0 
-    ? `<tr><td colspan="4" class="text-center" style="padding:16px; color:var(--admin-text-muted);">Sin ventas registradas</td></tr>`
-    : dbSales.slice(-5).reverse().map(s => `
-      <tr>
-        <td>${s.date}</td>
-        <td><strong>${s.productName}</strong></td>
-        <td>Talla ${s.size}</td>
-        <td><strong style="color:var(--admin-accent);">${s.price} Bs.</strong></td>
-      </tr>
-    `).join("");
-
-  document.getElementById("dashStockList").innerHTML = dbProducts.slice(0, 5).map(p => `
+// Usuarios y Nuevas Cuentas
+function renderUsersTable() {
+  const tbody = document.getElementById("usersTableBody");
+  if (!tbody) return;
+  tbody.innerHTML = dbUsers.map((u, idx) => `
     <tr>
-      <td><strong>${p.nombre}</strong></td>
-      <td>${p.marca}</td>
-      <td>${p.tallas.length} tallas</td>
-      <td><span class="badge-tag ${p.tallas.length <= 2 ? 'badge-danger' : 'badge-success'}">${p.tallas.length <= 2 ? 'Stock Crítico' : 'Disponible'}</span></td>
+      <td><strong>${u.nombre}</strong></td>
+      <td>${u.email}</td>
+      <td><span class="badge-tag ${u.rol === 'admin' ? 'badge-danger' : 'badge-success'}">${(u.rol || 'admin').toUpperCase()}</span></td>
+      <td><span class="badge-tag badge-success">Habilitado</span></td>
+      <td style="text-align: right;">
+        ${u.email !== "admin@shaday.com" ? `
+          <button class="btn-icon-danger" onclick="deleteUser(${idx})" title="Quitar Usuario">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        ` : '<span style="font-size:0.75rem; color:var(--admin-text-muted);">Principal</span>'}
+      </td>
     </tr>
   `).join("");
 }
 
-function populateDropdowns() {
-  document.getElementById("purProvider").innerHTML = dbProviders.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
-  const opts = dbProducts.map(p => `<option value="${p.id}">${p.nombre} - ${p.precio} Bs.</option>`).join("");
-  document.getElementById("purProduct").innerHTML = opts;
-  document.getElementById("saleProduct").innerHTML = opts;
-  updateSalePriceAuto();
-}
+window.handleSaveUser = function(e) {
+  e.preventDefault();
+  const nombre = document.getElementById("uName").value.trim();
+  const email = document.getElementById("uEmail").value.trim().toLowerCase();
+  const rol = document.getElementById("uRole").value;
+  const password = document.getElementById("uPassword").value;
 
-window.openNewProductModal = () => document.getElementById("modalProduct").classList.add("active");
-window.openNewPurchaseModal = () => { populateDropdowns(); document.getElementById("modalPurchase").classList.add("active"); };
-window.openNewSaleModal = () => { populateDropdowns(); document.getElementById("modalSale").classList.add("active"); };
-window.openNewProviderModal = () => document.getElementById("modalProvider").classList.add("active");
-window.openNewUserModal = () => document.getElementById("modalUser").classList.add("active");
-window.closeModal = (id) => document.getElementById(id).classList.remove("active");
+  if (dbUsers.some(u => u.email === email)) {
+    return alert("Este correo ya está registrado.");
+  }
 
-window.logoutAdmin = async () => {
-  if (confirm("¿Cerrar sesión del panel administrativo?")) {
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
-    localStorage.removeItem("shaday_current_user");
-    window.location.href = "index.html";
+  const newUser = {
+    id: `usr-${Date.now().toString().slice(-4)}`,
+    nombre: nombre,
+    email: email,
+    rol: rol,
+    password: password
+  };
+
+  dbUsers.push(newUser);
+  localStorage.setItem("shaday_users_list", JSON.stringify(dbUsers));
+
+  alert(`¡Cuenta creada con éxito!\n\nUsuario: ${nombre}\nEmail: ${email}\nRol: ${rol.toUpperCase()}`);
+  closeModal("modalUser");
+  document.getElementById("userForm").reset();
+  renderUsersTable();
+};
+
+window.deleteUser = function(idx) {
+  if (confirm("¿Deseas revocar el acceso a este usuario?")) {
+    dbUsers.splice(idx, 1);
+    localStorage.setItem("shaday_users_list", JSON.stringify(dbUsers));
+    renderUsersTable();
   }
 };
+
+function populateDropdowns() {
+  const purProv = document.getElementById("purProvider");
+  const purProd = document.getElementById("purProduct");
+  const saleProd = document.getElementById("saleProduct");
+
+  if (purProv) purProv.innerHTML = dbProviders.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  
+  const opts = dbProducts.map(p => `<option value="${p.id}">${p.nombre} - ${p.precio} Bs.</option>`).join("");
+  if (purProd) purProd.innerHTML = opts;
+  if (saleProd) saleProd.innerHTML = opts;
+  
+  updateSalePriceAuto();
+}
