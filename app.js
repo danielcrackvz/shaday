@@ -1,6 +1,6 @@
 /**
  * ==========================================================================
- * SNEAKERS SHADAY - LÓGICA DE TIENDA PÚBLICA (30 MODELOS Y WHATSAPP)
+ * SNEAKERS SHADAY - LÓGICA DE TIENDA PÚBLICA (BOTÓN FLOTANTE & 30 MODELOS)
  * ==========================================================================
  */
 
@@ -10,7 +10,7 @@ const STORE_CONFIG = {
   currency: "Bs."
 };
 
-// BASE DE DATOS CENTRAL DE LOS 30 MODELOS OFICIALES
+// BASE DE DATOS DE LOS 30 MODELOS OFICIALES
 const OFFICIAL_30_SNEAKERS = [
   { id: 'snk-001', nombre: 'Air Jordan 4 Retro Tour Yellow', marca: 'Jordan', precio: 950, tallas: [39,40,41,42,43], badge: 'Más Vendido', imagen_url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=700&q=80', descripcion: 'Silueta icónica con acabado en cuero sintético y malla transpirable. Amortiguación Air-Sole.' },
   { id: 'snk-002', nombre: 'Air Jordan 1 Retro Low OG Last Dance', marca: 'Jordan', precio: 780, tallas: [38,39,40,41,42], badge: 'Tendencia', imagen_url: 'https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=700&q=80', descripcion: 'Perfil bajo con mezcla de tonos negros, blancos y rojos legendarios. Suela de goma resistente.' },
@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initStore() {
-  // Sincronización con el panel: si no existen productos guardados, se cargan los 30 oficiales
   const stored = JSON.parse(localStorage.getItem("shaday_admin_products"));
   if (stored && stored.length > 0) {
     allSneakers = stored;
@@ -81,10 +80,10 @@ function renderAuthHeader() {
   if (currentUser) {
     const isAdmin = currentUser.rol === "admin" || currentUser.rol === "vendedor";
     container.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div style="display:flex; align-items:center; gap:6px;">
         ${isAdmin ? `
           <a href="admin.html" class="nav-btn" style="background:var(--color-accent); color:white;">
-            <i class="fa-solid fa-gauge-high"></i> Panel Admin
+            <i class="fa-solid fa-gauge-high"></i> Admin
           </a>
         ` : ''}
         <button class="nav-btn" onclick="handleLogout()" title="Cerrar sesión">
@@ -128,7 +127,6 @@ window.handleLogin = function(e) {
   const email = document.getElementById("loginEmail").value.trim().toLowerCase();
   const password = document.getElementById("loginPassword").value;
 
-  // Acceso Maestro de Dueño / Admin
   if (email === "admin@shaday.com" && password === "admin123") {
     currentUser = { id: "usr-admin-master", nombre: "Administrador Shaday", email: email, rol: "admin" };
     localStorage.setItem("shaday_current_user", JSON.stringify(currentUser));
@@ -137,7 +135,6 @@ window.handleLogin = function(e) {
     return;
   }
 
-  // Usuarios guardados
   const usersList = JSON.parse(localStorage.getItem("shaday_users_list")) || [];
   const found = usersList.find(u => u.email === email && u.password === password);
 
@@ -220,10 +217,10 @@ function renderProducts() {
 
   if (filtered.length === 0) {
     productsGrid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--color-text-muted);">
-        <i class="fa-solid fa-shoe-prints" style="font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.4;"></i>
+      <div style="grid-column: 1/-1; text-align: center; padding: 50px 16px; color: var(--color-text-muted);">
+        <i class="fa-solid fa-shoe-prints" style="font-size: 2.2rem; margin-bottom: 10px; display: block; opacity: 0.4;"></i>
         <h3>No se encontraron resultados</h3>
-        <p>Prueba buscando otra marca o limpiando los filtros.</p>
+        <p style="font-size: 0.85rem;">Prueba buscando otra marca o limpiando los filtros.</p>
       </div>
     `;
     return;
@@ -242,7 +239,7 @@ function renderProducts() {
           <h3 class="product-title" onclick="openProductModal('${item.id}')">${item.nombre}</h3>
           
           <div class="sizes-preview">
-            ${tallasArray.slice(0, 5).map(s => `<span class="size-mini-tag">T:${s}</span>`).join("")}
+            ${tallasArray.slice(0, 4).map(s => `<span class="size-mini-tag">T:${s}</span>`).join("")}
           </div>
 
           <div class="card-bottom">
@@ -295,7 +292,13 @@ function setupEventListeners() {
     if (e.target.id === "productModal") closeProductModal();
   });
 
-  document.getElementById("cartBtn").addEventListener("click", openCart);
+  // Eventos para abrir el carrito (desde la cabecera O desde el botón flotante)
+  const cartBtnHeader = document.getElementById("cartBtn");
+  if (cartBtnHeader) cartBtnHeader.addEventListener("click", openCart);
+
+  const floatingCartBtn = document.getElementById("floatingCartBtn");
+  if (floatingCartBtn) floatingCartBtn.addEventListener("click", openCart);
+
   document.getElementById("closeCart").addEventListener("click", closeCart);
   document.getElementById("cartOverlay").addEventListener("click", closeCart);
   document.getElementById("clearCartBtn").addEventListener("click", clearCart);
@@ -336,10 +339,10 @@ window.openProductModal = function(productId) {
 
         <div class="modal-actions">
           <button class="btn-modal-whatsapp" onclick="orderSingleProductWhatsApp()">
-            <i class="fa-brands fa-whatsapp"></i> Pedir este Par por WhatsApp
+            <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
           </button>
           <button class="btn-modal-cart" onclick="addModalProductToCart()">
-            <i class="fa-solid fa-bag-shopping"></i> Añadir a mi Carrito
+            <i class="fa-solid fa-bag-shopping"></i> Añadir al Carrito
           </button>
         </div>
       </div>
@@ -394,7 +397,15 @@ function addToCartLogic(product, size) {
 }
 
 function updateCartBadge() {
-  document.getElementById("cartCount").textContent = shoppingCart.reduce((a, c) => a + c.qty, 0);
+  const count = shoppingCart.reduce((a, c) => a + c.qty, 0);
+  
+  // Actualiza badge de cabecera si existe
+  const headerBadge = document.getElementById("cartCount");
+  if (headerBadge) headerBadge.textContent = count;
+
+  // Actualiza badge del botón flotante
+  const floatingBadge = document.getElementById("floatingCartCount");
+  if (floatingBadge) floatingBadge.textContent = count;
 }
 
 function openCart() {
@@ -412,7 +423,7 @@ function renderCartDrawer() {
   const list = document.getElementById("cartItemsList");
   let total = 0;
   if (shoppingCart.length === 0) {
-    list.innerHTML = `<div style="text-align:center; padding:40px 10px; color:var(--color-text-muted);"><i class="fa-solid fa-bag-shopping" style="font-size:2.5rem; margin-bottom:10px; opacity:0.4;"></i><p>Tu carrito está vacío</p></div>`;
+    list.innerHTML = `<div style="text-align:center; padding:36px 10px; color:var(--color-text-muted);"><i class="fa-solid fa-bag-shopping" style="font-size:2.2rem; margin-bottom:8px; opacity:0.4;"></i><p style="font-size:0.88rem;">Tu carrito está vacío</p></div>`;
     document.getElementById("cartTotalPrice").textContent = "0 Bs.";
     return;
   }
@@ -425,7 +436,7 @@ function renderCartDrawer() {
         <div class="cart-item-info">
           <h4>${item.name}</h4>
           <p>Talla: <strong>${item.size}</strong> | Cant: ${item.qty}</p>
-          <strong style="color:var(--color-text-main);">${sub} ${STORE_CONFIG.currency}</strong>
+          <strong style="color:var(--color-text-main); font-size:0.88rem;">${sub} ${STORE_CONFIG.currency}</strong>
         </div>
         <button class="cart-item-remove" onclick="removeCart(${idx})" title="Quitar">&times;</button>
       </div>
