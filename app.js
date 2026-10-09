@@ -6,7 +6,7 @@
 
 const STORE_CONFIG = {
   storeName: "Sneakers Shaday",
-  whatsappNumber: "59175512345", // Número de WhatsApp oficial en Bolivia
+  whatsappNumber: "59169576123", // Número de WhatsApp oficial en Bolivia
   currency: "Bs."
 };
 

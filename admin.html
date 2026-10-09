@@ -13,8 +13,8 @@
   <!-- SDK Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
-  <!-- Estilos con actualización de caché -->
-  <link rel="stylesheet" href="admin.css?v=4.0" />
+  <!-- Estilos -->
+  <link rel="stylesheet" href="admin.css?v=5.0" />
 </head>
 <body>
 
@@ -50,7 +50,7 @@
         </button>
         <button class="nav-item" data-tab="productos" onclick="switchTab('productos')">
           <i class="fa-solid fa-boxes-stacked"></i>
-          <span>Productos (30 pares)</span>
+          <span>Productos & Stock</span>
         </button>
         <button class="nav-item" data-tab="compras" onclick="switchTab('compras')">
           <i class="fa-solid fa-cart-flatbed"></i>
@@ -109,7 +109,7 @@
         </div>
       </header>
 
-      <!-- BARRA DE MÓDULOS RÁPIDOS PARA MÓVIL (Toca y cambia de vista de inmediato) -->
+      <!-- BARRA DE MÓDULOS RÁPIDOS MÓVIL -->
       <div class="mobile-module-nav">
         <button class="mod-pill active" data-mod="dashboard" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Inicio</button>
         <button class="mod-pill" data-mod="productos" onclick="switchTab('productos')"><i class="fa-solid fa-boxes-stacked"></i> Productos</button>
@@ -125,7 +125,7 @@
         <section class="tab-pane active" id="pane-dashboard">
           
           <div class="kpi-grid">
-            <div class="kpi-card" onclick="switchTab('productos')" style="cursor:pointer;" title="Toca para ver productos">
+            <div class="kpi-card" onclick="switchTab('productos')" style="cursor:pointer;" title="Ver productos">
               <div class="kpi-icon"><i class="fa-solid fa-shoe-prints"></i></div>
               <div class="kpi-data">
                 <span class="kpi-label">Modelos en Tienda</span>
@@ -134,16 +134,17 @@
               </div>
             </div>
 
-            <div class="kpi-card" onclick="switchTab('productos')" style="cursor:pointer;" title="Toca para ver stock">
+            <!-- KPI DE ALERTA DE STOCK BAJO -->
+            <div class="kpi-card kpi-card-alert" onclick="switchTab('productos')" style="cursor:pointer;" title="Ver modelos con stock bajo">
               <div class="kpi-icon kpi-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
               <div class="kpi-data">
-                <span class="kpi-label">Pares Stock Bajo</span>
+                <span class="kpi-label">Stock Bajo (≤ 4 pares)</span>
                 <h3 id="kpiLowStock">0</h3>
-                <span class="kpi-sub text-danger">Tallas ≤ 2 pares</span>
+                <span class="kpi-sub text-danger" id="kpiLowStockSub">Requieren reposición</span>
               </div>
             </div>
 
-            <div class="kpi-card" onclick="switchTab('ventas')" style="cursor:pointer;" title="Toca para ver ventas">
+            <div class="kpi-card" onclick="switchTab('ventas')" style="cursor:pointer;" title="Ver ventas">
               <div class="kpi-icon"><i class="fa-solid fa-money-bill-trend-up"></i></div>
               <div class="kpi-data">
                 <span class="kpi-label">Ventas Cobradas</span>
@@ -152,7 +153,7 @@
               </div>
             </div>
 
-            <div class="kpi-card" onclick="switchTab('compras')" style="cursor:pointer;" title="Toca para ver compras">
+            <div class="kpi-card" onclick="switchTab('compras')" style="cursor:pointer;" title="Ver compras">
               <div class="kpi-icon"><i class="fa-solid fa-wallet"></i></div>
               <div class="kpi-data">
                 <span class="kpi-label">Inversión Compras</span>
@@ -196,7 +197,7 @@
 
             <div class="card-box">
               <div class="card-box-header">
-                <h3><i class="fa-solid fa-bell"></i> Estado de Inventario</h3>
+                <h3><i class="fa-solid fa-bell"></i> Alerta y Estado de Stock</h3>
               </div>
               <div class="table-scroll-wrapper">
                 <table class="data-table">
@@ -204,8 +205,8 @@
                     <tr>
                       <th>Modelo</th>
                       <th>Marca</th>
-                      <th>Tallas</th>
-                      <th>Estado</th>
+                      <th>Pares Disponibles</th>
+                      <th>Estado / Alerta</th>
                     </tr>
                   </thead>
                   <tbody id="dashStockList"></tbody>
@@ -220,7 +221,7 @@
           <div class="pane-toolbar">
             <div class="search-box-admin">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="productSearchInput" placeholder="Buscar sneaker por nombre o marca..." />
+              <input type="text" id="productSearchInput" placeholder="Buscar sneaker por nombre, marca o stock..." />
             </div>
             <button class="btn-primary" onclick="openNewProductModal()">
               <i class="fa-solid fa-plus"></i> Añadir Nuevo Sneaker
@@ -233,7 +234,7 @@
                 <thead>
                   <tr>
                     <th>Foto</th>
-                    <th>Detalle del Sneaker</th>
+                    <th>Detalle del Sneaker & Stock Disponible</th>
                     <th style="text-align: right;">Acciones</th>
                   </tr>
                 </thead>
@@ -247,8 +248,8 @@
         <section class="tab-pane" id="pane-compras">
           <div class="pane-toolbar">
             <div class="pane-intro">
-              <h3>Ingreso de Compras y Lotes</h3>
-              <p>Registro de mercadería adquirida a proveedores mayoristas.</p>
+              <h3>Ingreso de Compras y Lotes (Suman Stock)</h3>
+              <p>Cada compra registrada suma automáticamente la cantidad de pares al stock del producto.</p>
             </div>
             <button class="btn-primary" onclick="openNewPurchaseModal()">
               <i class="fa-solid fa-cart-plus"></i> Registrar Compra
@@ -278,8 +279,8 @@
         <section class="tab-pane" id="pane-ventas">
           <div class="pane-toolbar">
             <div class="pane-intro">
-              <h3>Ventas Concretadas</h3>
-              <p>Historial de pedidos cerrados por WhatsApp o tienda física.</p>
+              <h3>Ventas Concretadas (Restan Stock)</h3>
+              <p>Cada venta confirmada descuenta automáticamente 1 par del stock del sneaker.</p>
             </div>
             <button class="btn-primary" onclick="openNewSaleModal()">
               <i class="fa-solid fa-plus"></i> Registrar Venta
@@ -353,7 +354,7 @@
     </main>
   </div>
 
-  <!-- Modal: Nuevo Sneaker -->
+  <!-- Modal: Nuevo Sneaker con Stock Inicial -->
   <div class="modal-backdrop" id="modalProduct">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
@@ -385,11 +386,16 @@
           </div>
 
           <div class="form-row-admin">
-            <div class="form-group-admin">
+            <div class="form-group-admin flex-1">
               <label>Precio de Venta (Bs.) *</label>
               <input type="number" id="pPrice" placeholder="Ej: 850" min="1" required />
             </div>
-            <div class="form-group-admin">
+            <!-- CAMPO DE STOCK INICIAL -->
+            <div class="form-group-admin flex-1">
+              <label>Stock Disponible (Cantidad de pares) *</label>
+              <input type="number" id="pStock" placeholder="Ej: 8" min="0" value="8" required />
+            </div>
+            <div class="form-group-admin flex-1">
               <label>Insignia / Badge</label>
               <select id="pBadge">
                 <option value="Disponible">Disponible</option>
@@ -468,12 +474,12 @@
             </div>
           </div>
           <div class="form-group-admin">
-            <label>Sneaker Comprado *</label>
+            <label>Sneaker Comprado (Se sumará a su stock) *</label>
             <select id="purProduct" required></select>
           </div>
           <div class="form-row-admin">
             <div class="form-group-admin">
-              <label>Cantidad de Pares *</label>
+              <label>Cantidad de Pares que Ingresan *</label>
               <input type="number" id="purQty" min="1" value="5" oninput="calcPurchaseTotal()" required />
             </div>
             <div class="form-group-admin">
@@ -488,7 +494,7 @@
         </div>
         <div class="modal-footer-admin">
           <button type="button" class="btn-secondary-admin" onclick="closeModal('modalPurchase')">Cancelar</button>
-          <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Registrar Ingreso</button>
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Registrar Ingreso y Sumar Stock</button>
         </div>
       </form>
     </div>
@@ -508,7 +514,7 @@
             <input type="text" id="saleCustomer" placeholder="Ej: Andrés Morales" required />
           </div>
           <div class="form-group-admin">
-            <label>Sneaker Vendido *</label>
+            <label>Sneaker Vendido (Se restará 1 par del stock) *</label>
             <select id="saleProduct" onchange="updateSalePriceAuto()" required></select>
           </div>
           <div class="form-row-admin">
@@ -538,7 +544,7 @@
         </div>
         <div class="modal-footer-admin">
           <button type="button" class="btn-secondary-admin" onclick="closeModal('modalSale')">Cancelar</button>
-          <button type="submit" class="btn-primary"><i class="fa-solid fa-cash-register"></i> Confirmar Venta</button>
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-cash-register"></i> Confirmar Venta y Restar Stock</button>
         </div>
       </form>
     </div>
@@ -560,7 +566,7 @@
           <div class="form-row-admin">
             <div class="form-group-admin">
               <label>Teléfono / WhatsApp *</label>
-              <input type="text" id="provPhone" placeholder="+591 70000000" required />
+              <input type="text" id="provPhone" placeholder="+591 69576123" required />
             </div>
             <div class="form-group-admin">
               <label>Ciudad / Origen</label>
@@ -580,7 +586,7 @@
     </div>
   </div>
 
-  <!-- Modal: Nuevo Usuario / Administrador -->
+  <!-- Modal: Nuevo Usuario -->
   <div class="modal-backdrop" id="modalUser">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
@@ -619,7 +625,6 @@
     </div>
   </div>
 
-  <!-- Script con actualización de versión -->
-  <script src="admin.js?v=4.0"></script>
+  <script src="admin.js?v=5.0"></script>
 </body>
 </html>

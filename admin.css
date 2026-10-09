@@ -665,3 +665,59 @@ html, body {
   .flex-1 { flex: 1; }
   .flex-2 { flex: 2; }
 }
+
+/* ================= ESTILOS DE STOCK Y ALERTAS VISUALES ================= */
+
+/* Etiqueta de Stock Normal */
+.stock-badge-normal {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Etiqueta de Alerta de Stock Bajo (<= 4 pares) */
+.stock-badge-alert {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulseAlert 2s infinite ease-in-out;
+}
+
+/* Etiqueta de Stock Agotado (0 pares) */
+.stock-badge-out {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@keyframes pulseAlert {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Tarjeta KPI con borde si hay stock crítico */
+.kpi-card-alert {
+  border-left: 4px solid var(--admin-warning) !important;
+}
