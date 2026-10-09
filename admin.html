@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Sneakers Shaday | Panel de Administración</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,9 +20,9 @@
     <div class="auth-lock-card">
       <i class="fa-solid fa-lock auth-lock-icon"></i>
       <h2>Acceso Restringido</h2>
-      <p>Debes iniciar sesión como administrador o vendedor para gestionar el catálogo y las operaciones.</p>
+      <p>Debes iniciar sesión con una cuenta de Administrador o Vendedor para ingresar a este panel.</p>
       <a href="index.html" class="btn-primary btn-block">
-        <i class="fa-solid fa-arrow-left"></i> Ir a la Tienda / Iniciar Sesión
+        <i class="fa-solid fa-arrow-left"></i> Ir a Iniciar Sesión
       </a>
     </div>
   </div>
@@ -37,7 +37,7 @@
           <h2>SHADAY</h2>
           <span>PANEL ADMINISTRATIVO</span>
         </div>
-        <button class="sidebar-close-mobile" onclick="toggleMobileSidebar()">&times;</button>
+        <button class="sidebar-close-mobile" onclick="toggleMobileSidebar()" aria-label="Cerrar menú">&times;</button>
       </div>
 
       <nav class="sidebar-menu">
@@ -47,7 +47,7 @@
         </button>
         <button class="nav-item" data-tab="productos">
           <i class="fa-solid fa-boxes-stacked"></i>
-          <span>Productos (30 pares)</span>
+          <span>Productos</span>
         </button>
         <button class="nav-item" data-tab="compras">
           <i class="fa-solid fa-cart-flatbed"></i>
@@ -116,7 +116,7 @@
               <div class="kpi-icon"><i class="fa-solid fa-shoe-prints"></i></div>
               <div class="kpi-data">
                 <span class="kpi-label">Modelos en Tienda</span>
-                <h3 id="kpiTotalProducts">0</h3>
+                <h3 id="kpiTotalProducts">30</h3>
                 <span class="kpi-sub">Total de siluetas activas</span>
               </div>
             </div>
@@ -149,7 +149,7 @@
             </div>
           </div>
 
-          <!-- Barra de Acciones Rápidas -->
+          <!-- Acciones Rápidas -->
           <div class="quick-actions-bar">
             <h4><i class="fa-solid fa-bolt"></i> Acciones Inmediatas</h4>
             <div class="actions-group">
@@ -216,16 +216,12 @@
 
           <div class="card-box">
             <div class="table-scroll-wrapper">
-              <table class="data-table">
+              <table class="data-table responsive-product-table">
                 <thead>
                   <tr>
                     <th>Foto</th>
-                    <th>Modelo</th>
-                    <th>Marca</th>
-                    <th>Precio</th>
-                    <th>Tallas en Stock</th>
-                    <th>Insignia</th>
-                    <th>Acciones</th>
+                    <th>Detalle del Sneaker</th>
+                    <th style="text-align: right;">Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="productsTableBody"></tbody>
@@ -239,7 +235,7 @@
           <div class="pane-toolbar">
             <div class="pane-intro">
               <h3>Ingreso de Compras y Lotes</h3>
-              <p>Registro de mercadería comprada a distribuidores mayoristas (Falabella, Kicks, etc.).</p>
+              <p>Registro de mercadería adquirida a proveedores mayoristas.</p>
             </div>
             <button class="btn-primary" onclick="openNewPurchaseModal()">
               <i class="fa-solid fa-cart-plus"></i> Registrar Compra
@@ -257,7 +253,6 @@
                     <th>Comprobante</th>
                     <th>Pares</th>
                     <th>Total Invertido</th>
-                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tbody id="purchasesTableBody"></tbody>
@@ -271,7 +266,7 @@
           <div class="pane-toolbar">
             <div class="pane-intro">
               <h3>Ventas Concretadas</h3>
-              <p>Historial de pedidos cerrados por WhatsApp o en la tienda física.</p>
+              <p>Historial de ventas confirmadas por WhatsApp o local comercial.</p>
             </div>
             <button class="btn-primary" onclick="openNewSaleModal()">
               <i class="fa-solid fa-plus"></i> Registrar Venta
@@ -287,7 +282,7 @@
                     <th>Cliente</th>
                     <th>Sneaker Vendido</th>
                     <th>Talla</th>
-                    <th>Método de Pago</th>
+                    <th>Método</th>
                     <th>Monto Cobrado</th>
                   </tr>
                 </thead>
@@ -302,7 +297,7 @@
           <div class="pane-toolbar">
             <div class="pane-intro">
               <h3>Directorio de Proveedores</h3>
-              <p>Contactos comerciales de importadores mayoristas de calzado.</p>
+              <p>Contactos comerciales de distribuidores mayoristas de calzado.</p>
             </div>
             <button class="btn-primary" onclick="openNewProviderModal()">
               <i class="fa-solid fa-user-plus"></i> Añadir Proveedor
@@ -315,11 +310,11 @@
         <section class="tab-pane" id="pane-usuarios">
           <div class="pane-toolbar">
             <div class="pane-intro">
-              <h3>Personal & Vendedores</h3>
-              <p>Administra los permisos de acceso del equipo de Sneakers Shaday.</p>
+              <h3>Personal, Administradores y Vendedores</h3>
+              <p>Crea cuentas para administradores adicionales o vendedores de tienda.</p>
             </div>
             <button class="btn-primary" onclick="openNewUserModal()">
-              <i class="fa-solid fa-user-shield"></i> Registrar Vendedor
+              <i class="fa-solid fa-user-shield"></i> Registrar Nuevo Usuario
             </button>
           </div>
 
@@ -330,10 +325,9 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Email</th>
-                    <th>Rol</th>
-                    <th>Fecha de Alta</th>
+                    <th>Rol / Permiso</th>
                     <th>Estado</th>
-                    <th>Acciones</th>
+                    <th style="text-align: right;">Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="usersTableBody"></tbody>
@@ -346,7 +340,7 @@
     </main>
   </div>
 
-  <!-- ================= MODAL: NUEVO PRODUCTO CON SCROLL FLUIDO ================= -->
+  <!-- Modal: Nuevo Sneaker -->
   <div class="modal-backdrop" id="modalProduct">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
@@ -395,7 +389,7 @@
           </div>
 
           <div class="form-group-admin">
-            <label>Fotografía del Sneaker (Se reflejará en la tienda) *</label>
+            <label>Fotografía del Sneaker *</label>
             <div class="image-uploader-box">
               <div class="upload-trigger" onclick="document.getElementById('pImageFile').click()">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -408,7 +402,7 @@
                 <button type="button" class="btn-remove-preview" onclick="removeSelectedImage()">&times;</button>
               </div>
             </div>
-            <small class="help-text">O si prefieres, pega el enlace web de la fotografía:</small>
+            <small class="help-text">O también puedes pegar el enlace web de la foto:</small>
             <input type="url" id="pImageUrl" placeholder="https://ejemplo.com/foto.jpg" oninput="handleUrlImagePreview(this.value)" />
           </div>
 
@@ -428,7 +422,7 @@
 
           <div class="form-group-admin">
             <label>Descripción / Ficha del Calzado</label>
-            <textarea id="pDesc" rows="3" placeholder="Detalles de materiales, suela, amortiguación y estilo..."></textarea>
+            <textarea id="pDesc" rows="3" placeholder="Detalles de materiales, amortiguación y estilo..."></textarea>
           </div>
 
         </div>
@@ -441,7 +435,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: COMPRA ================= -->
+  <!-- Modal: Compra -->
   <div class="modal-backdrop" id="modalPurchase">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
@@ -487,7 +481,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: VENTA ================= -->
+  <!-- Modal: Venta -->
   <div class="modal-backdrop" id="modalSale">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
@@ -537,7 +531,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: PROVEEDOR ================= -->
+  <!-- Modal: Proveedor -->
   <div class="modal-backdrop" id="modalProvider">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
@@ -573,11 +567,11 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: USUARIO ================= -->
+  <!-- Modal: Nuevo Usuario / Administrador -->
   <div class="modal-backdrop" id="modalUser">
     <div class="modal-dialog-admin">
       <div class="modal-header-admin">
-        <h3><i class="fa-solid fa-user-shield"></i> Registrar Vendedor</h3>
+        <h3><i class="fa-solid fa-user-shield"></i> Registrar Usuario / Administrador</h3>
         <button class="btn-close-admin" onclick="closeModal('modalUser')">&times;</button>
       </div>
       <form id="userForm" onsubmit="handleSaveUser(event)" class="modal-form-scrollable">
@@ -588,14 +582,14 @@
           </div>
           <div class="form-group-admin">
             <label>Correo Electrónico *</label>
-            <input type="email" id="uEmail" placeholder="vendedor1@shaday.com" required />
+            <input type="email" id="uEmail" placeholder="nuevo.admin@shaday.com" required />
           </div>
           <div class="form-row-admin">
             <div class="form-group-admin flex-1">
-              <label>Rol *</label>
+              <label>Rol / Permiso *</label>
               <select id="uRole" required>
-                <option value="vendedor">Vendedor</option>
-                <option value="admin">Administrador</option>
+                <option value="admin">Administrador (Control Total)</option>
+                <option value="vendedor">Vendedor (Ventas y Catálogo)</option>
               </select>
             </div>
             <div class="form-group-admin flex-1">
