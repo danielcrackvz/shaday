@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sneakers Shaday | Tienda de Sneakers Urbanos</title>
-  <meta name="description" content="Catálogo de sneakers urbanos en Santa Cruz - Bolivia. Sneakers Shaday." />
+  <meta name="description" content="Catálogo exclusivo de sneakers urbanos y calzados streetwear en Santa Cruz y Warnes, Bolivia." />
   
   <!-- Tipografía & Iconos -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,38 +20,35 @@
 </head>
 <body>
 
-  <!-- Barra superior -->
+  <!-- Barra Superior Comercial -->
   <div class="top-announcement">
-    <p>
-      <i class="fa-solid fa-truck-fast"></i> Envíos a toda Bolivia | Entregas directas en Santa Cruz y Warnes
-      <span id="dbStatusBadge" style="margin-left: 14px; background: rgba(255,255,255,0.18); padding: 2px 10px; border-radius: 99px; font-size: 0.75rem;">
-        <i class="fa-solid fa-circle-notch fa-spin"></i> Conectando...
-      </span>
-    </p>
+    <div class="announcement-content">
+      <span><i class="fa-solid fa-truck-fast"></i> Envíos a toda Bolivia | Entregas garantizadas en Santa Cruz y Warnes</span>
+      <span class="announcement-phone"><i class="fa-brands fa-whatsapp"></i> Atención 24/7</span>
+    </div>
   </div>
 
   <!-- Cabecera Principal -->
   <header class="main-header">
     <div class="header-container">
-      <a href="#" class="brand-logo">
+      <a href="index.html" class="brand-logo">
         <i class="fa-solid fa-shoe-prints"></i>
         <span>SHADAY<span>.</span></span>
       </a>
 
-      <!-- Buscador -->
+      <!-- Buscador en tiempo real -->
       <div class="search-bar">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Buscar por marca, modelo o color..." />
+        <input type="text" id="searchInput" placeholder="Buscar por marca, modelo o estilo..." />
       </div>
 
-      <!-- Acciones de cabecera -->
+      <!-- Acciones de Cabecera -->
       <div class="header-actions">
         <a href="#catalogo" class="nav-btn"><i class="fa-solid fa-fire"></i> Catálogo</a>
         
-        <!-- BOTÓN DE USUARIO / INICIAR SESIÓN -->
         <div id="authHeaderContainer">
           <button id="authBtn" class="nav-btn" onclick="openAuthModal()">
-            <i class="fa-solid fa-user"></i> Iniciar Sesión
+            <i class="fa-solid fa-user"></i> Mi Cuenta
           </button>
         </div>
 
@@ -63,37 +60,37 @@
     </div>
   </header>
 
-  <!-- Banner Hero -->
+  <!-- Banner Hero Principal -->
   <section class="hero-section">
     <div class="hero-content">
-      <span class="hero-tag"><i class="fa-solid fa-bolt"></i> Nueva Colección Urbana 2026</span>
-      <h1>EL DROP QUE ESTABAS ESPERANDO</h1>
-      <p>Catálogo exclusivo conectado en tiempo real. Zapatillas originales con entregas y confirmación vía WhatsApp.</p>
+      <span class="hero-tag"><i class="fa-solid fa-bolt"></i> Drop Urbano 2026</span>
+      <h1>ESTILO CALLEJERO & COLECCIÓN EXCLUSIVA</h1>
+      <p>Descubre los sneakers más cotizados: Jordan, Nike Dunk, Adidas, New Balance y lanzamientos streetwear con garantía de autenticidad.</p>
       <div class="hero-buttons">
-        <a href="#catalogo" class="btn-primary"><i class="fa-solid fa-bag-shopping"></i> Explorar Catálogo</a>
+        <a href="#catalogo" class="btn-primary"><i class="fa-solid fa-bag-shopping"></i> Ver Catálogo Completo</a>
         <a href="https://wa.me/59175512345?text=Hola%20Sneakers%20Shaday,%20quiero%20hacer%20una%20consulta" target="_blank" class="btn-secondary">
-          <i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp
+          <i class="fa-brands fa-whatsapp"></i> Consultar por WhatsApp
         </a>
       </div>
     </div>
     <div class="hero-image-wrapper">
-      <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80" alt="Sneakers Shaday Banner" class="hero-img" />
+      <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80" alt="Sneakers Shaday Colección" class="hero-img" />
     </div>
   </section>
 
-  <!-- Catálogo -->
+  <!-- Sección Catálogo -->
   <section class="catalog-section" id="catalogo">
     <div class="section-header">
       <div>
-        <h2 class="section-title">Catálogo Completo de Sneakers</h2>
-        <p class="section-subtitle">Stock dinámico sincronizado desde la base de datos PostgreSQL</p>
+        <h2 class="section-title">Catálogo de Sneakers</h2>
+        <p class="section-subtitle">Modelos con disponibilidad inmediata y entrega coordinada</p>
       </div>
       <div class="filter-count">
-        <span id="resultsCount">Cargando modelos...</span>
+        <span id="resultsCount">Cargando catálogo...</span>
       </div>
     </div>
 
-    <!-- Filtros -->
+    <!-- Filtros por Marcas y Tallas -->
     <div class="filters-container">
       <div class="category-pills" id="categoryPills">
         <button class="pill active" data-category="todos">Todos</button>
@@ -119,101 +116,97 @@
         </select>
 
         <select id="sortFilter" class="filter-select">
-          <option value="default">Ordenar: Novedades</option>
+          <option value="default">Novedades</option>
           <option value="price-asc">Precio: Menor a Mayor</option>
           <option value="price-desc">Precio: Mayor a Menor</option>
         </select>
       </div>
     </div>
 
-    <!-- Grid de Sneakers -->
+    <!-- Cuadrícula de Productos -->
     <div class="products-grid" id="productsGrid"></div>
   </section>
 
-  <!-- Ventajas -->
+  <!-- Beneficios / Confianza -->
   <section class="features-section">
     <div class="feature-card">
-      <div class="feature-icon"><i class="fa-solid fa-database"></i></div>
-      <h3>Base de Datos en Tiempo Real</h3>
-      <p>Sincronización con Supabase sin recargas lentas de servidor.</p>
+      <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h3>Calidad y Selección</h3>
+      <p>Modelos inspeccionados físicamente antes de cada despacho.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><i class="fa-solid fa-qrcode"></i></div>
-      <h3>Pago con Código QR</h3>
-      <p>Aceptamos pagos por QR simple del Banco Central de Bolivia y transferencias bancarias.</p>
+      <h3>Pago Fácil con QR</h3>
+      <p>Transferencias directas por código QR simple de cualquier banco nacional.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
-      <h3>Atención por WhatsApp</h3>
-      <p>Envía tu pedido y recibe fotos reales de tu par antes de despacharlo a tu domicilio.</p>
+      <h3>Atención Directa</h3>
+      <p>Coordinación personalizada por chat con fotos reales de tu par.</p>
     </div>
   </section>
 
-  <!-- ================= MODAL DE AUTENTICACIÓN (LOGIN Y REGISTRO) ================= -->
+  <!-- Modal: Detalle de Sneaker -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content modal-shoe-detail">
+      <button class="close-modal-btn" id="closeModal" aria-label="Cerrar">&times;</button>
+      <div class="modal-body-scrollable" id="modalProductDetails"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Login y Registro -->
   <div class="modal-overlay" id="authModal">
-    <div class="modal-content" style="max-width: 440px; padding: 28px;">
-      <button class="close-modal-btn" onclick="closeAuthModal()">&times;</button>
+    <div class="modal-content modal-auth-box">
+      <button class="close-modal-btn" onclick="closeAuthModal()" aria-label="Cerrar">&times;</button>
       
-      <div class="auth-tabs" style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
-        <button id="tabLoginBtn" class="pill active" style="flex:1;" onclick="switchAuthTab('login')">Iniciar Sesión</button>
-        <button id="tabRegisterBtn" class="pill" style="flex:1;" onclick="switchAuthTab('register')">Registrarse</button>
+      <div class="auth-tabs">
+        <button id="tabLoginBtn" class="pill active" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+        <button id="tabRegisterBtn" class="pill" onclick="switchAuthTab('register')">Registrarse</button>
       </div>
 
-      <!-- FORMULARIO 1: LOGIN -->
+      <!-- Login -->
       <form id="loginForm" onsubmit="handleLogin(event)">
-        <h3 style="margin-bottom: 6px; font-weight:800;">Bienvenido de nuevo</h3>
-        <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">Ingresa tus credenciales para acceder</p>
+        <h3>Acceso al Sistema</h3>
+        <p class="auth-subtitle">Ingresa con tu cuenta o accede como administrador.</p>
         
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div>
-            <label style="font-size:0.8rem; font-weight:700;">Correo Electrónico</label>
-            <input type="email" id="loginEmail" placeholder="admin@shaday.com o tu email" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:4px;" />
-          </div>
-          <div>
-            <label style="font-size:0.8rem; font-weight:700;">Contraseña</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:4px;" />
-          </div>
-          <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;">
-            <i class="fa-solid fa-right-to-bracket"></i> Acceder
-          </button>
+        <div class="form-group-ui">
+          <label>Correo Electrónico</label>
+          <input type="email" id="loginEmail" placeholder="admin@shaday.com o tu email" required />
         </div>
+        <div class="form-group-ui">
+          <label>Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-primary btn-block">
+          <i class="fa-solid fa-right-to-bracket"></i> Ingresar
+        </button>
       </form>
 
-      <!-- FORMULARIO 2: REGISTRO -->
+      <!-- Registro -->
       <form id="registerForm" onsubmit="handleRegister(event)" style="display:none;">
-        <h3 style="margin-bottom: 6px; font-weight:800;">Crear Cuenta</h3>
-        <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">Regístrate para guardar favoritos y gestionar compras</p>
+        <h3>Crear Cuenta</h3>
+        <p class="auth-subtitle">Regístrate para guardar pedidos y compras.</p>
         
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div>
-            <label style="font-size:0.8rem; font-weight:700;">Nombre Completo</label>
-            <input type="text" id="regName" placeholder="Tu nombre y apellido" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:4px;" />
-          </div>
-          <div>
-            <label style="font-size:0.8rem; font-weight:700;">Correo Electrónico</label>
-            <input type="email" id="regEmail" placeholder="correo@ejemplo.com" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:4px;" />
-          </div>
-          <div>
-            <label style="font-size:0.8rem; font-weight:700;">Contraseña (mínimo 6 caracteres)</label>
-            <input type="password" id="regPassword" placeholder="••••••••" minlength="6" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:4px;" />
-          </div>
-          <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;">
-            <i class="fa-solid fa-user-plus"></i> Registrarme
-          </button>
+        <div class="form-group-ui">
+          <label>Nombre Completo</label>
+          <input type="text" id="regName" placeholder="Tu nombre" required />
         </div>
+        <div class="form-group-ui">
+          <label>Correo Electrónico</label>
+          <input type="email" id="regEmail" placeholder="correo@ejemplo.com" required />
+        </div>
+        <div class="form-group-ui">
+          <label>Contraseña (mínimo 6 caracteres)</label>
+          <input type="password" id="regPassword" placeholder="••••••••" minlength="6" required />
+        </div>
+        <button type="submit" class="btn-primary btn-block">
+          <i class="fa-solid fa-user-plus"></i> Registrarme
+        </button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: DETALLE DEL PRODUCTO -->
-  <div class="modal-overlay" id="productModal">
-    <div class="modal-content">
-      <button class="close-modal-btn" id="closeModal">&times;</button>
-      <div class="modal-body" id="modalProductDetails"></div>
-    </div>
-  </div>
-
-  <!-- CARRITO LATERAL -->
+  <!-- Carrito Lateral -->
   <div class="cart-drawer-overlay" id="cartOverlay"></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="cart-drawer-header">
@@ -223,11 +216,11 @@
     <div class="cart-items-container" id="cartItemsList"></div>
     <div class="cart-drawer-footer">
       <div class="cart-subtotal">
-        <span>Total estimado:</span>
+        <span>Total:</span>
         <strong id="cartTotalPrice">0 Bs.</strong>
       </div>
       <button id="checkoutBtn" class="btn-whatsapp-checkout">
-        <i class="fa-brands fa-whatsapp"></i> Pedir Todo por WhatsApp
+        <i class="fa-brands fa-whatsapp"></i> Finalizar Pedido por WhatsApp
       </button>
       <button id="clearCartBtn" class="btn-clear-cart">Vaciar Carrito</button>
     </div>
@@ -241,18 +234,18 @@
         <p>Tu tienda especializada en calzado urbano, sneakers y moda streetwear en Warnes y Santa Cruz, Bolivia.</p>
       </div>
       <div class="footer-col">
-        <h4>Horarios de Atención</h4>
+        <h4>Horarios</h4>
         <p>Lunes a Sábado: 08:30 - 20:00</p>
-        <p>Pedidos web y consultas WhatsApp: 24/7</p>
+        <p>Pedidos Web & WhatsApp: 24/7</p>
       </div>
       <div class="footer-col">
-        <h4>Tecnología Implementada</h4>
-        <p><i class="fa-brands fa-js"></i> HTML5, CSS3, JavaScript Vanilla</p>
-        <p><i class="fa-solid fa-database"></i> Supabase (Auth + PostgreSQL Cloud)</p>
+        <h4>Modalidades de Pago</h4>
+        <p><i class="fa-solid fa-qrcode"></i> Código QR Simple (Cualquier Banco)</p>
+        <p><i class="fa-solid fa-money-bill-wave"></i> Efectivo contra entrega local</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Sneakers Shaday - Proyecto de Grado BTH Sistemas Informáticos.</p>
+      <p>© 2026 Sneakers Shaday - Proyecto de Bachillerato Técnico Humanístico (BTH).</p>
     </div>
   </footer>
 

@@ -1,25 +1,47 @@
 /**
  * ==========================================================================
- * SNEAKERS SHADAY - APP.JS CON SUPABASE AUTH & GESTIÓN DE SESIÓN
+ * SNEAKERS SHADAY - LÓGICA DE TIENDA PÚBLICA (30 MODELOS Y WHATSAPP)
  * ==========================================================================
  */
 
-const SUPABASE_URL = 'https://obzyazdmnzxtwjnxkhkk.supabase.co';       // Pega tu Project URL de Supabase si la tienes
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ienlhemRtbnp4dHdqbnhraGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MzUzNTMsImV4cCI6MjEwNjMxMTM1M30.yEFpKmFw93CErHtQidD0zMbCbfiEgQ6m0HMWZqJ00QA";  // Pega tu anon key si la tienes
-
 const STORE_CONFIG = {
   storeName: "Sneakers Shaday",
-  whatsappNumber: "59175512345",
+  whatsappNumber: "59175512345", // Número de WhatsApp oficial en Bolivia
   currency: "Bs."
 };
 
-// Respaldo de productos
-const fallbackSneakers = [
-  { id: 'snk-001', nombre: 'Air Jordan 4 Retro Tour Yellow', marca: 'Jordan', precio: 950, tallas: [39,40,41,42,43], badge: 'Más Vendido', imagen_url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=700&q=80', descripcion: 'Silueta icónica con acabado en cuero sintético y malla transpirable.' },
-  { id: 'snk-002', nombre: 'Air Jordan 1 Retro Low OG Last Dance', marca: 'Jordan', precio: 780, tallas: [38,39,40,41,42], badge: 'Tendencia', imagen_url: 'https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=700&q=80', descripcion: 'Perfil bajo con mezcla de tonos negros, blancos y rojos legendarios.' },
-  { id: 'snk-003', nombre: 'Nike Dunk Low Retro Panda', marca: 'Nike', precio: 650, tallas: [38,39,40,41,42,43], badge: 'Drop Exclusivo', imagen_url: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=700&q=80', descripcion: 'El par streetwear más popular en blanco y negro.' },
-  { id: 'snk-004', nombre: 'Adidas Forum Low Classic White', marca: 'Adidas', precio: 590, tallas: [38,39,40,41,42], badge: 'Clásico', imagen_url: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=700&q=80', descripcion: 'Inspirada en el basketball de los años 80.' },
-  { id: 'snk-005', nombre: 'New Balance 550 White Green', marca: 'New Balance', precio: 720, tallas: [39,40,41,42,43], badge: 'Retro Trend', imagen_url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=700&q=80', descripcion: 'El regreso de un clásico vintage de 1989.' }
+// BASE DE DATOS CENTRAL DE LOS 30 MODELOS OFICIALES
+const OFFICIAL_30_SNEAKERS = [
+  { id: 'snk-001', nombre: 'Air Jordan 4 Retro Tour Yellow', marca: 'Jordan', precio: 950, tallas: [39,40,41,42,43], badge: 'Más Vendido', imagen_url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=700&q=80', descripcion: 'Silueta icónica con acabado en cuero sintético y malla transpirable. Amortiguación Air-Sole.' },
+  { id: 'snk-002', nombre: 'Air Jordan 1 Retro Low OG Last Dance', marca: 'Jordan', precio: 780, tallas: [38,39,40,41,42], badge: 'Tendencia', imagen_url: 'https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=700&q=80', descripcion: 'Perfil bajo con mezcla de tonos negros, blancos y rojos legendarios. Suela de goma resistente.' },
+  { id: 'snk-003', nombre: 'Nike Dunk Low Retro Panda', marca: 'Nike', precio: 650, tallas: [38,39,40,41,42,43], badge: 'Drop Exclusivo', imagen_url: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=700&q=80', descripcion: 'El par streetwear más popular a nivel mundial. Contraste blanco y negro limpio.' },
+  { id: 'snk-004', nombre: 'Nike Air Bakin Varsity Royal', marca: 'Nike', precio: 890, tallas: [40,41,42,43], badge: 'Exclusivo', imagen_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80', descripcion: 'Líneas fluidas y cámara de aire visible en azul eléctrico. Estilo retro basket urbano.' },
+  { id: 'snk-005', nombre: 'Adidas Forum Low Classic White', marca: 'Adidas', precio: 590, tallas: [38,39,40,41,42], badge: 'Clásico', imagen_url: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=700&q=80', descripcion: 'Inspirada en el basketball de los años 80, equipada con correa en el tobillo.' },
+  { id: 'snk-006', nombre: 'Adidas Yeezy Boost 350 V2 Onyx', marca: 'Adidas', precio: 1100, tallas: [39,40,41,42], badge: 'Premium', imagen_url: 'https://images.unsplash.com/photo-1512374382149-233c42b6a83b?auto=format&fit=crop&w=700&q=80', descripcion: 'Tecnología Primeknit con entresuela traslúcida que envuelve el sistema BOOST.' },
+  { id: 'snk-007', nombre: 'New Balance 550 White Green', marca: 'New Balance', precio: 720, tallas: [39,40,41,42,43], badge: 'Retro Trend', imagen_url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=700&q=80', descripcion: 'El regreso de un clásico de 1989. Estética vintage y logotipo N en verde bosque.' },
+  { id: 'snk-008', nombre: 'Air Jordan 9 Retro Space Jam', marca: 'Jordan', precio: 1050, tallas: [40,41,42,43], badge: 'Colección', imagen_url: 'https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&w=700&q=80', descripcion: 'Edición conmemorativa con grabado multilingüe en la suela y soporte de tobillo.' },
+  { id: 'snk-009', nombre: 'Nike Air Force 1 07 Triple White', marca: 'Nike', precio: 620, tallas: [37,38,39,40,41,42,43,44], badge: 'Básico Esencial', imagen_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=700&q=80', descripcion: 'El clásico absoluto en blanco impoluto con amortiguación Nike Air encapsulada.' },
+  { id: 'snk-010', nombre: 'Nike SB Dunk Low Pro Wheat', marca: 'Nike', precio: 790, tallas: [39,40,41,42], badge: 'Skate Culture', imagen_url: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=700&q=80', descripcion: 'Gamuza marrón premium con suela de goma antiadherente de máxima durabilidad.' },
+  { id: 'snk-011', nombre: 'Air Jordan 1 High Travis Mocha Custom', marca: 'Jordan', precio: 1250, tallas: [40,41,42,43], badge: 'Ultra Hype', imagen_url: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=700&q=80', descripcion: 'Detalle de Swoosh invertido y tonos café mocha con gamuza suave de alta calidad.' },
+  { id: 'snk-012', nombre: 'Adidas Samba OG Cloud White', marca: 'Adidas', precio: 680, tallas: [38,39,40,41,42,43], badge: 'Top Ventas', imagen_url: 'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?auto=format&fit=crop&w=700&q=80', descripcion: 'Puntera en T de ante con suela de caramelo flexible. La silueta viral más codiciada.' },
+  { id: 'snk-013', nombre: 'Adidas Gazelle Indoor Bold Blue', marca: 'Adidas', precio: 640, tallas: [38,39,40,41,42], badge: 'Vintage', imagen_url: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=700&q=80', descripcion: 'Gamuza azul cobalto vibrante con las 3 franjas dentadas en contraste.' },
+  { id: 'snk-014', nombre: 'New Balance 2002R Protection Pack Rain Cloud', marca: 'New Balance', precio: 890, tallas: [40,41,42,43], badge: 'Destacado', imagen_url: 'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=700&q=80', descripcion: 'Efecto deconstruido con capas de ante grisáceo y tecnología N-ergy.' },
+  { id: 'snk-015', nombre: 'New Balance 9060 Sea Salt Cherry', marca: 'New Balance', precio: 920, tallas: [38,39,40,41,42], badge: 'Futurista', imagen_url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=700&q=80', descripcion: 'Diseño audaz con entresuela de cápsulas esculpidas y absorción ABZORB.' },
+  { id: 'snk-016', nombre: 'Nike Air Max 1 86 Big Bubble', marca: 'Nike', precio: 820, tallas: [39,40,41,42,43], badge: 'Edición Especial', imagen_url: 'https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?auto=format&fit=crop&w=700&q=80', descripcion: 'Recreación exacta del lanzamiento original con cámara de aire visible ampliada.' },
+  { id: 'snk-017', nombre: 'Air Jordan 3 Retro White Cement', marca: 'Jordan', precio: 1150, tallas: [40,41,42,43,44], badge: 'Colección', imagen_url: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=700&q=80', descripcion: 'Estampado Elephant Print original, cuero granulado y logotipo Nike Air vintage.' },
+  { id: 'snk-018', nombre: 'Air Jordan 11 Retro Jubilee 25th', marca: 'Jordan', precio: 1200, tallas: [40,41,42,43], badge: 'Edición Limitada', imagen_url: 'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=700&q=80', descripcion: 'Charol negro brillante de corte alto con fibra de carbono en la placa media.' },
+  { id: 'snk-019', nombre: 'Adidas Campus 00s Core Black', marca: 'Adidas', precio: 610, tallas: [37,38,39,40,41,42], badge: 'Streetwear', imagen_url: 'https://images.unsplash.com/photo-1520256862855-398228c41684?auto=format&fit=crop&w=700&q=80', descripcion: 'Estilo skate de los años 2000 con lengüeta acolchada y cordones extra anchos.' },
+  { id: 'snk-020', nombre: 'Vans Old Skool Classic Black White', marca: 'Vans', precio: 450, tallas: [37,38,39,40,41,42,43], badge: 'Clásico Skater', imagen_url: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=700&q=80', descripcion: 'Lona resistente combinada con ante y suela waffle de goma vulcanizada duradera.' },
+  { id: 'snk-021', nombre: 'Vans Sk8-Hi Pro Black White', marca: 'Vans', precio: 490, tallas: [38,39,40,41,42], badge: 'Caña Alta', imagen_url: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=700&q=80', descripcion: 'Bota acolchada con refuerzo en la puntera para mayor soporte y durabilidad.' },
+  { id: 'snk-022', nombre: 'Converse Chuck 70 High Vintage Black', marca: 'Converse', precio: 480, tallas: [37,38,39,40,41,42,43], badge: 'Económico', imagen_url: 'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=700&q=80', descripcion: 'Lona premium de 12 oz, costuras vintage y plantilla OrthoLite acolchada.' },
+  { id: 'snk-023', nombre: 'Puma Suede Classic XXI Negro', marca: 'Puma', precio: 470, tallas: [38,39,40,41,42], badge: 'Urbano Retro', imagen_url: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=700&q=80', descripcion: 'Gamuza auténtica, raya Formstrip distintiva y diseño clásico vigente desde 1968.' },
+  { id: 'snk-024', nombre: 'Puma Slipstream Bball Heritage', marca: 'Puma', precio: 540, tallas: [39,40,41,42,43], badge: 'Novedad', imagen_url: 'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?auto=format&fit=crop&w=700&q=80', descripcion: 'Reinvención del calzado de baloncesto con inserciones geométricas de cuero.' },
+  { id: 'snk-025', nombre: 'Air Jordan 1 Mid Chicago Toe', marca: 'Jordan', precio: 850, tallas: [39,40,41,42,43], badge: 'Popular', imagen_url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=700&q=80', descripcion: 'Colores legendarios Chicago Bulls en corte medio para uso diario con estilo.' },
+  { id: 'snk-026', nombre: 'Nike Cortez Classic Leather White Red', marca: 'Nike', precio: 560, tallas: [38,39,40,41,42], badge: 'Vintage Run', imagen_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=700&q=80', descripcion: 'Diseño liviano de perfil bajo con entresuela de EVA acolchada.' },
+  { id: 'snk-027', nombre: 'ASICS GEL-Kayano 14 Metallic Silver', marca: 'ASICS', precio: 860, tallas: [39,40,41,42,43], badge: 'Tendencia Y2K', imagen_url: 'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=700&q=80', descripcion: 'Estética plateada running con amortiguación de tecnología GEL.' },
+  { id: 'snk-028', nombre: 'New Balance 1906R Castlerock', marca: 'New Balance', precio: 880, tallas: [40,41,42,43], badge: 'Tech Runner', imagen_url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=700&q=80', descripcion: 'Estructura técnica con soporte de arco N-lock y absorción superior.' },
+  { id: 'snk-029', nombre: 'Adidas Superstar 82 Core White Black', marca: 'Adidas', precio: 580, tallas: [38,39,40,41,42,43], badge: 'Leyenda Urbana', imagen_url: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=700&q=80', descripcion: 'Puntera de concha clásica con tres franjas dentadas en negro.' },
+  { id: 'snk-030', nombre: 'Air Jordan 5 Retro Fire Red Silver', marca: 'Jordan', precio: 1100, tallas: [40,41,42,43,44], badge: 'Colección', imagen_url: 'https://images.unsplash.com/photo-1512374382149-233c42b6a83b?auto=format&fit=crop&w=700&q=80', descripcion: 'Lengüeta reflectante 3M y suela con dientes de tiburón inspirados en aviones caza.' }
 ];
 
 let allSneakers = [];
@@ -30,47 +52,28 @@ let currentSortOrder = "default";
 let selectedModalProduct = null;
 let selectedModalSize = null;
 let shoppingCart = JSON.parse(localStorage.getItem("shaday_cart")) || [];
-
-// ================= ESTADO DE SESIÓN =================
 let currentUser = JSON.parse(localStorage.getItem("shaday_current_user")) || null;
 
-// Inicialización
 document.addEventListener("DOMContentLoaded", () => {
   initStore();
   renderAuthHeader();
+  setupEventListeners();
 });
 
-async function initStore() {
-  // 1. Cargar productos creados por el admin si existen
-  const adminCustom = JSON.parse(localStorage.getItem("shaday_admin_products"));
-  if (adminCustom && adminCustom.length > 0) {
-    allSneakers = adminCustom;
+function initStore() {
+  // Sincronización con el panel: si no existen productos guardados, se cargan los 30 oficiales
+  const stored = JSON.parse(localStorage.getItem("shaday_admin_products"));
+  if (stored && stored.length > 0) {
+    allSneakers = stored;
   } else {
-    allSneakers = fallbackSneakers;
-  }
-
-  // 2. Conexión Supabase opcional
-  if (SUPABASE_URL.startsWith("https://") && window.supabase) {
-    try {
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const { data, error } = await supabase.from('productos').select('*');
-      if (!error && data && data.length > 0) {
-        allSneakers = data;
-        document.getElementById("dbStatusBadge").innerHTML = `<i class="fa-solid fa-circle-check" style="color:#4ade80;"></i> Supabase Conectado`;
-      }
-    } catch (e) {
-      document.getElementById("dbStatusBadge").innerHTML = `<i class="fa-solid fa-server"></i> Modo Local Activo`;
-    }
-  } else {
-    document.getElementById("dbStatusBadge").innerHTML = `<i class="fa-solid fa-server"></i> Modo Local Activo`;
+    allSneakers = [...OFFICIAL_30_SNEAKERS];
+    localStorage.setItem("shaday_admin_products", JSON.stringify(allSneakers));
   }
 
   renderProducts();
   updateCartBadge();
-  setupEventListeners();
 }
 
-// ================= SISTEMA DE LOGIN Y REGISTRO =================
 function renderAuthHeader() {
   const container = document.getElementById("authHeaderContainer");
   if (!container) return;
@@ -80,7 +83,7 @@ function renderAuthHeader() {
     container.innerHTML = `
       <div style="display:flex; align-items:center; gap:8px;">
         ${isAdmin ? `
-          <a href="admin.html" class="nav-btn" style="background:var(--accent-green); color:white;">
+          <a href="admin.html" class="nav-btn" style="background:var(--color-accent); color:white;">
             <i class="fa-solid fa-gauge-high"></i> Panel Admin
           </a>
         ` : ''}
@@ -92,7 +95,7 @@ function renderAuthHeader() {
   } else {
     container.innerHTML = `
       <button class="nav-btn" onclick="openAuthModal()">
-        <i class="fa-solid fa-user"></i> Iniciar Sesión
+        <i class="fa-solid fa-user"></i> Mi Cuenta
       </button>
     `;
   }
@@ -120,32 +123,27 @@ window.switchAuthTab = function(tab) {
   }
 };
 
-window.handleLogin = async function(e) {
+window.handleLogin = function(e) {
   e.preventDefault();
   const email = document.getElementById("loginEmail").value.trim().toLowerCase();
   const password = document.getElementById("loginPassword").value;
 
-  // 1. Caso Dueño Maestro por defecto
+  // Acceso Maestro de Dueño / Admin
   if (email === "admin@shaday.com" && password === "admin123") {
-    currentUser = {
-      id: "usr-admin-master",
-      nombre: "Administrador Shaday",
-      email: email,
-      rol: "admin"
-    };
-    saveUserSession(currentUser);
-    alert("¡Bienvenido, Dueño de Sneakers Shaday! Redirigiendo a tu panel de control...");
+    currentUser = { id: "usr-admin-master", nombre: "Administrador Shaday", email: email, rol: "admin" };
+    localStorage.setItem("shaday_current_user", JSON.stringify(currentUser));
+    alert("¡Bienvenido al Panel de Control de Sneakers Shaday!");
     window.location.href = "admin.html";
     return;
   }
 
-  // 2. Comprobar usuarios registrados localmente
-  const registeredUsers = JSON.parse(localStorage.getItem("shaday_users_list")) || [];
-  const found = registeredUsers.find(u => u.email === email && u.password === password);
+  // Usuarios guardados
+  const usersList = JSON.parse(localStorage.getItem("shaday_users_list")) || [];
+  const found = usersList.find(u => u.email === email && u.password === password);
 
   if (found) {
     currentUser = { id: found.id, nombre: found.nombre, email: found.email, rol: found.rol };
-    saveUserSession(currentUser);
+    localStorage.setItem("shaday_current_user", JSON.stringify(currentUser));
     alert(`¡Hola de nuevo, ${found.nombre}!`);
     closeAuthModal();
     renderAuthHeader();
@@ -155,38 +153,20 @@ window.handleLogin = async function(e) {
     return;
   }
 
-  // 3. Intento vía Supabase Auth
-  if (SUPABASE_URL.startsWith("https://") && window.supabase) {
-    try {
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (!error && data.user) {
-        currentUser = {
-          id: data.user.id,
-          nombre: data.user.user_metadata?.nombre || data.user.email.split("@")[0],
-          email: data.user.email,
-          rol: data.user.user_metadata?.rol || "cliente"
-        };
-        saveUserSession(currentUser);
-        alert(`Sesión iniciada correctamente.`);
-        closeAuthModal();
-        renderAuthHeader();
-        if (currentUser.rol === "admin") window.location.href = "admin.html";
-        return;
-      }
-    } catch (err) {
-      console.warn("Error Supabase Auth:", err);
-    }
-  }
-
-  alert("Credenciales incorrectas. Para ingresar como administrador usa:\nCorreo: admin@shaday.com\nContraseña: admin123");
+  alert("Credenciales incorrectas.\n\nPara acceder como Administrador usa:\nCorreo: admin@shaday.com\nContraseña: admin123");
 };
 
-window.handleRegister = async function(e) {
+window.handleRegister = function(e) {
   e.preventDefault();
   const nombre = document.getElementById("regName").value.trim();
   const email = document.getElementById("regEmail").value.trim().toLowerCase();
   const password = document.getElementById("regPassword").value;
+
+  let usersList = JSON.parse(localStorage.getItem("shaday_users_list")) || [];
+  if (usersList.some(u => u.email === email)) {
+    alert("Este correo ya se encuentra registrado.");
+    return;
+  }
 
   const newUser = {
     id: `usr-${Date.now().toString().slice(-4)}`,
@@ -197,39 +177,24 @@ window.handleRegister = async function(e) {
     fecha: new Date().toLocaleDateString("es-BO")
   };
 
-  // Guardar en lista de usuarios
-  let usersList = JSON.parse(localStorage.getItem("shaday_users_list")) || [];
-  if (usersList.some(u => u.email === email)) {
-    alert("Ya existe una cuenta registrada con este correo electrónico.");
-    return;
-  }
-
   usersList.push(newUser);
   localStorage.setItem("shaday_users_list", JSON.stringify(usersList));
-
-  // Iniciar sesión de inmediato
   currentUser = { id: newUser.id, nombre: newUser.nombre, email: newUser.email, rol: newUser.rol };
-  saveUserSession(currentUser);
+  localStorage.setItem("shaday_current_user", JSON.stringify(currentUser));
 
-  alert(`¡Cuenta creada con éxito! Bienvenido a Sneakers Shaday, ${nombre}.`);
+  alert(`¡Cuenta creada con éxito! Bienvenido, ${nombre}.`);
   closeAuthModal();
   renderAuthHeader();
 };
-
-function saveUserSession(user) {
-  localStorage.setItem("shaday_current_user", JSON.stringify(user));
-}
 
 window.handleLogout = function() {
   if (confirm("¿Deseas cerrar tu sesión?")) {
     localStorage.removeItem("shaday_current_user");
     currentUser = null;
     renderAuthHeader();
-    alert("Sesión finalizada.");
   }
 };
 
-// ================= RENDERIZACIÓN DE PRODUCTOS Y FILTROS =================
 function renderProducts() {
   const productsGrid = document.getElementById("productsGrid");
   const resultsCount = document.getElementById("resultsCount");
@@ -255,9 +220,10 @@ function renderProducts() {
 
   if (filtered.length === 0) {
     productsGrid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
-        <i class="fa-solid fa-shoe-prints" style="font-size: 2.8rem; margin-bottom: 14px; display: block; opacity: 0.5;"></i>
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--color-text-muted);">
+        <i class="fa-solid fa-shoe-prints" style="font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.4;"></i>
         <h3>No se encontraron resultados</h3>
+        <p>Prueba buscando otra marca o limpiando los filtros.</p>
       </div>
     `;
     return;
@@ -280,7 +246,7 @@ function renderProducts() {
           </div>
 
           <div class="card-bottom">
-            <div class="price-box">
+            <div>
               <span class="price-label">Precio</span>
               <span class="product-price">${item.precio} ${STORE_CONFIG.currency}</span>
             </div>
@@ -288,7 +254,7 @@ function renderProducts() {
               <button class="btn-card-details" onclick="openProductModal('${item.id}')" title="Ver detalles">
                 <i class="fa-solid fa-eye"></i>
               </button>
-              <button class="btn-card-add" onclick="quickAddToCart('${item.id}')" title="Agregar al carrito">
+              <button class="btn-card-add" onclick="quickAddToCart('${item.id}')" title="Añadir">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -305,14 +271,12 @@ function setupEventListeners() {
     renderProducts();
   });
 
-  document.querySelectorAll(".pill").forEach(pill => {
+  document.querySelectorAll(".category-pills .pill").forEach(pill => {
     pill.addEventListener("click", () => {
-      if (pill.dataset.category) {
-        document.querySelectorAll(".category-pills .pill").forEach(p => p.classList.remove("active"));
-        pill.classList.add("active");
-        selectedCategory = pill.dataset.category;
-        renderProducts();
-      }
+      document.querySelectorAll(".category-pills .pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      selectedCategory = pill.dataset.category;
+      renderProducts();
     });
   });
 
@@ -327,6 +291,10 @@ function setupEventListeners() {
   });
 
   document.getElementById("closeModal").addEventListener("click", closeProductModal);
+  document.getElementById("productModal").addEventListener("click", (e) => {
+    if (e.target.id === "productModal") closeProductModal();
+  });
+
   document.getElementById("cartBtn").addEventListener("click", openCart);
   document.getElementById("closeCart").addEventListener("click", closeCart);
   document.getElementById("cartOverlay").addEventListener("click", closeCart);
@@ -334,7 +302,7 @@ function setupEventListeners() {
   document.getElementById("checkoutBtn").addEventListener("click", checkoutWhatsAppCart);
 }
 
-// Modal y Carrito
+// Modal de Detalles
 window.openProductModal = function(productId) {
   const product = allSneakers.find(p => p.id === productId);
   if (!product) return;
@@ -349,13 +317,13 @@ window.openProductModal = function(productId) {
         <img src="${product.imagen_url}" alt="${product.nombre}" />
       </div>
       <div class="modal-info-col">
-        <span class="modal-brand">${product.marca}</span>
+        <span class="modal-brand">${product.marca} - Colección Urbana</span>
         <h2 class="modal-title">${product.nombre}</h2>
         <div class="modal-price">${product.precio} ${STORE_CONFIG.currency}</div>
-        <p class="modal-desc">${product.descripcion || 'Calzado urbano exclusivo de máxima calidad.'}</p>
+        <p class="modal-desc">${product.descripcion || 'Calzado urbano exclusivo de máxima comodidad y diseño.'}</p>
 
         <div class="size-selector-title">
-          <span>Selecciona tu Talla:</span>
+          <span>Selecciona tu Talla Disponible:</span>
         </div>
 
         <div class="modal-sizes-grid">
@@ -371,7 +339,7 @@ window.openProductModal = function(productId) {
             <i class="fa-brands fa-whatsapp"></i> Pedir este Par por WhatsApp
           </button>
           <button class="btn-modal-cart" onclick="addModalProductToCart()">
-            <i class="fa-solid fa-bag-shopping"></i> Añadir al Carrito
+            <i class="fa-solid fa-bag-shopping"></i> Añadir a mi Carrito
           </button>
         </div>
       </div>
@@ -394,12 +362,12 @@ function closeProductModal() {
 window.orderSingleProductWhatsApp = function() {
   if (!selectedModalProduct || !selectedModalSize) return;
   const msg = `¡Hola *${STORE_CONFIG.storeName}*! 👋👟\n` +
-    `Vi este modelo en su web y quiero comprarlo:\n\n` +
+    `Estoy interesado en adquirir este sneaker de su catálogo:\n\n` +
     `📌 *Modelo:* ${selectedModalProduct.nombre}\n` +
-    `🏷️️ *Marca:* ${selectedModalProduct.marca}\n` +
+    `🏷️ *Marca:* ${selectedModalProduct.marca}\n` +
     `📏 *Talla:* ${selectedModalSize}\n` +
     `💰 *Precio:* ${selectedModalProduct.precio} ${STORE_CONFIG.currency}\n\n` +
-    `¿Me confirman disponibilidad y el código QR para transferir? ¡Gracias!`;
+    `¿Tienen disponibilidad para entrega o envío? ¡Muchas gracias!`;
   window.open(`https://wa.me/${STORE_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank");
 };
 
@@ -420,6 +388,7 @@ function addToCartLogic(product, size) {
   const existing = shoppingCart.find(i => i.id === product.id && i.size === size);
   if (existing) existing.qty += 1;
   else shoppingCart.push({ id: product.id, name: product.nombre, price: product.precio, image: product.imagen_url, size, qty: 1 });
+  
   localStorage.setItem("shaday_cart", JSON.stringify(shoppingCart));
   updateCartBadge();
 }
@@ -443,7 +412,7 @@ function renderCartDrawer() {
   const list = document.getElementById("cartItemsList");
   let total = 0;
   if (shoppingCart.length === 0) {
-    list.innerHTML = `<div class="cart-empty-msg"><i class="fa-solid fa-cart-arrow-down"></i><p>Carrito vacío</p></div>`;
+    list.innerHTML = `<div style="text-align:center; padding:40px 10px; color:var(--color-text-muted);"><i class="fa-solid fa-bag-shopping" style="font-size:2.5rem; margin-bottom:10px; opacity:0.4;"></i><p>Tu carrito está vacío</p></div>`;
     document.getElementById("cartTotalPrice").textContent = "0 Bs.";
     return;
   }
@@ -455,14 +424,14 @@ function renderCartDrawer() {
         <img src="${item.image}" class="cart-item-img" />
         <div class="cart-item-info">
           <h4>${item.name}</h4>
-          <p>Talla ${item.size} x ${item.qty}</p>
-          <strong>${sub} Bs.</strong>
+          <p>Talla: <strong>${item.size}</strong> | Cant: ${item.qty}</p>
+          <strong style="color:var(--color-text-main);">${sub} ${STORE_CONFIG.currency}</strong>
         </div>
-        <button class="cart-item-remove" onclick="removeCart(${idx})">&times;</button>
+        <button class="cart-item-remove" onclick="removeCart(${idx})" title="Quitar">&times;</button>
       </div>
     `;
   }).join("");
-  document.getElementById("cartTotalPrice").textContent = `${total} Bs.`;
+  document.getElementById("cartTotalPrice").textContent = `${total} ${STORE_CONFIG.currency}`;
 }
 
 window.removeCart = (idx) => {
@@ -473,10 +442,13 @@ window.removeCart = (idx) => {
 };
 
 function clearCart() {
-  shoppingCart = [];
-  localStorage.setItem("shaday_cart", JSON.stringify(shoppingCart));
-  updateCartBadge();
-  renderCartDrawer();
+  if (shoppingCart.length === 0) return;
+  if (confirm("¿Deseas vaciar el carrito?")) {
+    shoppingCart = [];
+    localStorage.setItem("shaday_cart", JSON.stringify(shoppingCart));
+    updateCartBadge();
+    renderCartDrawer();
+  }
 }
 
 function checkoutWhatsAppCart() {
@@ -488,6 +460,10 @@ function checkoutWhatsAppCart() {
     total += s;
     text += `${i+1}. *${it.name}* (Talla: ${it.size}) x ${it.qty} = ${s} Bs.\n`;
   });
-  const msg = `¡Hola *${STORE_CONFIG.storeName}*! 🛒\nQuiero realizar este pedido:\n\n${text}\n💵 *TOTAL:* ${total} Bs.\n\nPor favor me envían el QR para pagar.`;
+  const msg = `¡Hola *${STORE_CONFIG.storeName}*! 🛒👟\n` +
+    `Deseo realizar este pedido desde su sitio web:\n\n` +
+    `${text}\n` +
+    `💵 *TOTAL:* ${total} ${STORE_CONFIG.currency}\n\n` +
+    `Por favor me envían el código QR para transferir y coordinar entrega.`;
   window.open(`https://wa.me/${STORE_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank");
 }
