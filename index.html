@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Sneakers Shaday | Tienda de Sneakers Urbanos</title>
   <meta name="description" content="Catálogo exclusivo de sneakers urbanos y calzados streetwear en Santa Cruz y Warnes, Bolivia." />
   
@@ -20,44 +20,41 @@
 </head>
 <body>
 
-  <!-- Barra Superior Comercial -->
+  <!-- Barra Superior de Avisos -->
   <div class="top-announcement">
     <div class="announcement-content">
       <span><i class="fa-solid fa-truck-fast"></i> Envíos a toda Bolivia | Entregas en Santa Cruz y Warnes</span>
-      <span class="announcement-phone"><i class="fa-brands fa-whatsapp"></i> Atención 24/7</span>
+      <span class="announcement-tag"><i class="fa-brands fa-whatsapp"></i> Pedidos 24/7</span>
     </div>
   </div>
 
-  <!-- Cabecera Principal -->
+  <!-- Cabecera Principal Adaptativa -->
   <header class="main-header">
     <div class="header-container">
-      <a href="index.html" class="brand-logo">
-        <i class="fa-solid fa-shoe-prints"></i>
-        <span>SHADAY<span>.</span></span>
-      </a>
+      
+      <!-- Fila Superior: Marca y Acciones de Usuario -->
+      <div class="header-top-row">
+        <a href="index.html" class="brand-logo">
+          <i class="fa-solid fa-shoe-prints"></i>
+          <span>SHADAY<span>.</span></span>
+        </a>
 
-      <!-- Buscador en tiempo real -->
-      <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Buscar por marca, modelo o estilo..." />
-      </div>
-
-      <!-- Acciones de Cabecera -->
-      <div class="header-actions">
-        <a href="#catalogo" class="nav-btn"><i class="fa-solid fa-fire"></i> Catálogo</a>
-        
-        <div id="authHeaderContainer">
-          <button id="authBtn" class="nav-btn" onclick="openAuthModal()">
-            <i class="fa-solid fa-user"></i> Mi Cuenta
+        <!-- Contenedor dinámico de usuario (en móvil son botones compactos de icono) -->
+        <div class="header-actions" id="authHeaderContainer">
+          <button class="header-icon-btn" onclick="openAuthModal()" title="Mi Cuenta">
+            <i class="fa-solid fa-user"></i>
           </button>
         </div>
-
-        <!-- Botón carrito en cabecera (escritorio) -->
-        <button id="cartBtn" class="cart-button-header" title="Ver Carrito">
-          <i class="fa-solid fa-bag-shopping"></i>
-          <span id="cartCount" class="cart-badge">0</span>
-        </button>
       </div>
+
+      <!-- Fila Inferior: Buscador en vivo (en móvil toma el 100% sin desbordar) -->
+      <div class="header-search-row">
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Buscar sneaker por marca, modelo o color..." autocomplete="off" />
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -84,14 +81,14 @@
     <div class="section-header">
       <div>
         <h2 class="section-title">Catálogo de Sneakers</h2>
-        <p class="section-subtitle">Modelos con disponibilidad inmediata y entrega coordinada</p>
+        <p class="section-subtitle">Stock actualizado para entrega inmediata</p>
       </div>
       <div class="filter-count">
-        <span id="resultsCount">Cargando catálogo...</span>
+        <span id="resultsCount">Cargando modelos...</span>
       </div>
     </div>
 
-    <!-- Filtros por Marcas y Tallas -->
+    <!-- Filtros de Marcas (Deslizables en móvil) y Selector de Tallas -->
     <div class="filters-container">
       <div class="category-pills" id="categoryPills">
         <button class="pill active" data-category="todos">Todos</button>
@@ -124,11 +121,11 @@
       </div>
     </div>
 
-    <!-- Cuadrícula de Productos -->
+    <!-- Cuadrícula de Sneakers -->
     <div class="products-grid" id="productsGrid"></div>
   </section>
 
-  <!-- Beneficios / Confianza -->
+  <!-- Beneficios de Compra -->
   <section class="features-section">
     <div class="feature-card">
       <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
@@ -137,23 +134,23 @@
     </div>
     <div class="feature-card">
       <div class="feature-icon"><i class="fa-solid fa-qrcode"></i></div>
-      <h3>Pago Fácil con QR</h3>
-      <p>Transferencias directas por código QR simple de cualquier banco nacional.</p>
+      <h3>Pago con Código QR</h3>
+      <p>Aceptamos transferencias QR de cualquier banco de Bolivia.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
-      <h3>Atención Directa</h3>
-      <p>Coordinación personalizada por chat con fotos reales de tu par.</p>
+      <h3>Atención Inmediata</h3>
+      <p>Coordinación de tallas y entregas en tiempo real por WhatsApp.</p>
     </div>
   </section>
 
-  <!-- BOTÓN FLOTANTE DEL CARRITO DE COMPRAS (SIEMPRE VISIBLE) -->
-  <button id="floatingCartBtn" class="floating-cart-btn" title="Ver Carrito de Compras" aria-label="Ver Carrito">
+  <!-- ================= BOTÓN FLOTANTE DEL CARRITO (FAB FIJO) ================= -->
+  <button id="floatingCartBtn" class="floating-cart-btn" title="Ver Carrito de Compras" aria-label="Carrito de compras">
     <i class="fa-solid fa-bag-shopping"></i>
     <span id="floatingCartCount" class="floating-cart-badge">0</span>
   </button>
 
-  <!-- Modal: Detalle de Sneaker -->
+  <!-- Modal: Detalle de Producto -->
   <div class="modal-overlay" id="productModal">
     <div class="modal-content modal-shoe-detail">
       <button class="close-modal-btn" id="closeModal" aria-label="Cerrar">&times;</button>
@@ -174,7 +171,7 @@
       <!-- Login -->
       <form id="loginForm" onsubmit="handleLogin(event)">
         <h3>Acceso al Sistema</h3>
-        <p class="auth-subtitle">Ingresa con tu cuenta o accede como administrador.</p>
+        <p class="auth-subtitle">Ingresa con tus datos de cliente o administrador.</p>
         
         <div class="form-group-ui">
           <label>Correo Electrónico</label>
@@ -192,7 +189,7 @@
       <!-- Registro -->
       <form id="registerForm" onsubmit="handleRegister(event)" style="display:none;">
         <h3>Crear Cuenta</h3>
-        <p class="auth-subtitle">Regístrate para guardar pedidos y compras.</p>
+        <p class="auth-subtitle">Crea tu cuenta para realizar tus pedidos.</p>
         
         <div class="form-group-ui">
           <label>Nombre Completo</label>
@@ -238,12 +235,12 @@
     <div class="footer-container">
       <div class="footer-col">
         <h3>SNEAKERS SHADAY</h3>
-        <p>Tu tienda especializada en calzado urbano, sneakers y moda streetwear en Warnes y Santa Cruz, Bolivia.</p>
+        <p>Tu tienda especializada en calzado urbano y sneakers streetwear en Warnes y Santa Cruz, Bolivia.</p>
       </div>
       <div class="footer-col">
         <h4>Horarios</h4>
         <p>Lunes a Sábado: 08:30 - 20:00</p>
-        <p>Pedidos Web & WhatsApp: 24/7</p>
+        <p>Pedidos Web & WhatsApp: 24 Horas</p>
       </div>
       <div class="footer-col">
         <h4>Modalidades de Pago</h4>

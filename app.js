@@ -73,6 +73,12 @@ function initStore() {
   updateCartBadge();
 }
 
+/**
+ * ==========================================================================
+ * SNEAKERS SHADAY - RENDER AUTH HEADER LIMPIO (RESPONSIVE)
+ * ==========================================================================
+ */
+
 function renderAuthHeader() {
   const container = document.getElementById("authHeaderContainer");
   if (!container) return;
@@ -82,19 +88,19 @@ function renderAuthHeader() {
     container.innerHTML = `
       <div style="display:flex; align-items:center; gap:6px;">
         ${isAdmin ? `
-          <a href="admin.html" class="nav-btn" style="background:var(--color-accent); color:white;">
-            <i class="fa-solid fa-gauge-high"></i> Admin
+          <a href="admin.html" class="header-icon-btn admin-btn" title="Panel de Administración">
+            <i class="fa-solid fa-gauge-high"></i>
           </a>
         ` : ''}
-        <button class="nav-btn" onclick="handleLogout()" title="Cerrar sesión">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i> Salir (${currentUser.nombre.split(" ")[0]})
+        <button class="header-icon-btn logout-btn" onclick="handleLogout()" title="Cerrar sesión (${currentUser.nombre})">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
       </div>
     `;
   } else {
     container.innerHTML = `
-      <button class="nav-btn" onclick="openAuthModal()">
-        <i class="fa-solid fa-user"></i> Mi Cuenta
+      <button class="header-icon-btn" onclick="openAuthModal()" title="Iniciar Sesión">
+        <i class="fa-solid fa-user"></i>
       </button>
     `;
   }
